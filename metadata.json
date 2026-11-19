@@ -1,0 +1,6 @@
+{
+  "name": "ApexList",
+  "description": "Live Geometry Dash Extreme Demon leaderboard, Top 10 victor tracker, and real-time placement alerts powered by AREDL and Pointercrate.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
