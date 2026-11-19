@@ -1,3 +1,4 @@
+import { motion } from 'motion/react';
 import type { RankedPlayer } from '../types';
 
 interface PlayersViewProps {
@@ -19,24 +20,28 @@ export function PlayersView({ players, source, onChangeSource, loading }: Player
         </div>
 
         <div className="flex items-center gap-1 rounded-lg border border-white/[0.06] bg-[#10131C] p-1">
-          <button
-            type="button"
-            onClick={() => onChangeSource('pointercrate')}
-            className={`rounded-md px-3.5 py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
-              source === 'pointercrate' ? 'bg-[#1C2233] text-white' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            Pointercrate
-          </button>
-          <button
-            type="button"
-            onClick={() => onChangeSource('aredl')}
-            className={`rounded-md px-3.5 py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
-              source === 'aredl' ? 'bg-[#1C2233] text-white' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            AREDL
-          </button>
+          {(['pointercrate', 'aredl'] as const).map((src) => {
+            const active = source === src;
+            return (
+              <button
+                key={src}
+                type="button"
+                onClick={() => onChangeSource(src)}
+                className={`relative rounded-md px-3.5 py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
+                  active ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                {active && (
+                  <motion.span
+                    layoutId="players-source-pill"
+                    transition={{ type: 'spring', stiffness: 460, damping: 36 }}
+                    className="absolute inset-0 rounded-md bg-[#1C2233]"
+                  />
+                )}
+                <span className="relative z-10">{src === 'pointercrate' ? 'Pointercrate' : 'AREDL'}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -51,7 +56,13 @@ export function PlayersView({ players, source, onChangeSource, loading }: Player
           Player rankings are syncing from {source === 'aredl' ? 'AREDL' : 'Pointercrate'}.
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-white/[0.08] bg-[#10131C]">
+        <motion.div
+          key={source}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="overflow-x-auto rounded-xl border border-white/[0.08] bg-[#10131C]"
+        >
           <table className="w-full text-left text-sm">
             <thead className="border-b border-white/[0.08] bg-[#131722] text-xs font-medium text-slate-400">
               <tr>
@@ -64,8 +75,14 @@ export function PlayersView({ players, source, onChangeSource, loading }: Player
               </tr>
             </thead>
             <tbody className="divide-y divide-white/[0.06]">
-              {players.map((p) => (
-                <tr key={p.id} className="transition-colors hover:bg-white/[0.02]">
+              {players.map((p, idx) => (
+                <motion.tr
+                  key={p.id}
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.16, delay: Math.min(idx * 0.01, 0.18), ease: [0.16, 1, 0.3, 1] }}
+                  className="transition-colors hover:bg-white/[0.02]"
+                >
                   <td className="px-5 py-3 font-mono text-sm font-semibold tabular-nums text-slate-300">
                     <span className={p.rank === 1 ? 'text-amber-400' : p.rank <= 3 ? 'text-rose-400' : ''}>
                       #{p.rank}
@@ -88,11 +105,11 @@ export function PlayersView({ players, source, onChangeSource, loading }: Player
                   <td className="px-5 py-3 text-right font-mono text-sm font-semibold text-white tabular-nums">
                     {p.score.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                   </td>
-                </tr>
+                </motion.tr>
               ))}
             </tbody>
           </table>
-        </div>
+        </motion.div>
       )}
     </div>
   );

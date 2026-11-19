@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import { ExternalLink, Trophy, Users, X } from 'lucide-react';
 import type { DemonDetail } from '../types';
 import { formatRelativeTime } from '../utils/notifications';
@@ -43,60 +44,76 @@ export function DemonDetailModal({ demonKey, onClose }: DemonDetailModalProps) {
     };
   }, [demonKey]);
 
-  if (!demonKey) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-[2px]"
-      onClick={onClose}
-    >
-      <div
-        className="relative flex max-h-[88vh] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-white/[0.1] bg-[#0E1119] text-slate-100 shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-        role="dialog"
-        aria-label={detail ? `${detail.name} details` : 'Demon details'}
-      >
-        <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-4">
-          <div className="min-w-0">
-            <h2 className="truncate font-display text-xl font-semibold text-white">
-              {detail ? detail.name : 'Loading demon...'}
-            </h2>
-            {detail && (
-              <p className="mt-0.5 text-xs text-slate-400">
-                {detail.levelId ? `ID ${detail.levelId}` : 'Unlinked ID'}
-                {detail.publisher ? ` · Published by ${detail.publisher}` : ''}
-                {detail.verifier ? ` · Verified by ${detail.verifier}` : ''}
-              </p>
-            )}
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/[0.08] text-slate-400 transition-colors hover:bg-white/[0.05] hover:text-white"
-            aria-label="Close modal"
+    <AnimatePresence>
+      {demonKey && (
+        <motion.div
+          key="demon-modal-backdrop"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-[2px]"
+          onClick={onClose}
+        >
+          <motion.div
+            key="demon-modal-panel"
+            initial={{ opacity: 0, scale: 0.96, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.97, y: 8 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            className="relative flex max-h-[88vh] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-white/[0.1] bg-[#0E1119] text-slate-100 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-label={detail ? `${detail.name} details` : 'Demon details'}
           >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto px-6 py-5">
-          {loading ? (
-            <div className="space-y-4">
-              <div className="h-44 w-full animate-pulse rounded-lg bg-[#161B28]" />
-              <div className="grid grid-cols-4 gap-3">
-                <div className="h-16 animate-pulse rounded-lg bg-[#161B28]" />
-                <div className="h-16 animate-pulse rounded-lg bg-[#161B28]" />
-                <div className="h-16 animate-pulse rounded-lg bg-[#161B28]" />
-                <div className="h-16 animate-pulse rounded-lg bg-[#161B28]" />
+            <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-4">
+              <div className="min-w-0">
+                <h2 className="truncate font-display text-xl font-semibold text-white">
+                  {detail ? detail.name : 'Loading demon...'}
+                </h2>
+                {detail && (
+                  <p className="mt-0.5 text-xs text-slate-400">
+                    {detail.levelId ? `ID ${detail.levelId}` : 'Unlinked ID'}
+                    {detail.publisher ? ` · Published by ${detail.publisher}` : ''}
+                    {detail.verifier ? ` · Verified by ${detail.verifier}` : ''}
+                  </p>
+                )}
               </div>
-              <div className="h-40 animate-pulse rounded-lg bg-[#161B28]" />
+              <motion.button
+                type="button"
+                whileTap={{ scale: 0.92 }}
+                onClick={onClose}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/[0.08] text-slate-400 transition-colors hover:bg-white/[0.05] hover:text-white"
+                aria-label="Close modal"
+              >
+                <X className="h-4 w-4" />
+              </motion.button>
             </div>
-          ) : error ? (
-            <div className="rounded-lg border border-rose-500/30 bg-rose-500/10 p-4 text-sm text-rose-200">
-              {error}
-            </div>
-          ) : detail ? (
-            <div className="space-y-6">
+
+            <div className="flex-1 overflow-y-auto px-6 py-5">
+              {loading ? (
+                <div className="space-y-4">
+                  <div className="h-44 w-full animate-pulse rounded-lg bg-[#161B28]" />
+                  <div className="grid grid-cols-4 gap-3">
+                    <div className="h-16 animate-pulse rounded-lg bg-[#161B28]" />
+                    <div className="h-16 animate-pulse rounded-lg bg-[#161B28]" />
+                    <div className="h-16 animate-pulse rounded-lg bg-[#161B28]" />
+                    <div className="h-16 animate-pulse rounded-lg bg-[#161B28]" />
+                  </div>
+                  <div className="h-40 animate-pulse rounded-lg bg-[#161B28]" />
+                </div>
+              ) : error ? (
+                <div className="rounded-lg border border-rose-500/30 bg-rose-500/10 p-4 text-sm text-rose-200">
+                  {error}
+                </div>
+              ) : detail ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                  className="space-y-6"
+                >
               {/* Top hero split */}
               <div className="grid gap-5 md:grid-cols-[240px_1fr]">
                 <DemonThumbnail
@@ -290,10 +307,12 @@ export function DemonDetailModal({ demonKey, onClose }: DemonDetailModalProps) {
                   </div>
                 )}
               </div>
+                </motion.div>
+              ) : null}
             </div>
-          ) : null}
-        </div>
-      </div>
-    </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

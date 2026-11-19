@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'motion/react';
 import { Bell, BellOff, Check, Play, Volume2, VolumeX, X } from 'lucide-react';
 import type { NotificationSettings } from '../types';
 
@@ -22,8 +23,6 @@ export function NotificationDrawer({
   onSendTest,
   streamConnected,
 }: NotificationDrawerProps) {
-  if (!open) return null;
-
   const toggle = (key: 'browserEnabled' | 'soundEnabled' | 'notifyPlaced' | 'notifyUpdated' | 'notifyTop10Victor') => {
     onUpdateSettings({
       ...settings,
@@ -42,28 +41,45 @@ export function NotificationDrawer({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-[2px]">
-      <div
-        className="relative flex h-full w-full max-w-md flex-col border-l border-white/[0.08] bg-[#0D1017] text-slate-100 shadow-2xl"
-        role="dialog"
-        aria-label="Alert Preferences"
-      >
-        <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-5">
-          <div>
-            <h2 className="font-display text-lg font-semibold tracking-tight text-white">Alert Preferences</h2>
-            <p className="mt-0.5 text-xs text-slate-400">
-              {streamConnected ? 'Live stream active · checks every 60s' : 'Reconnecting live stream'}
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.08] text-slate-400 transition-colors hover:bg-white/[0.05] hover:text-white focus-visible:outline-2 focus-visible:outline-rose-500"
-            aria-label="Close alert preferences"
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          key="notif-drawer-backdrop"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          onClick={onClose}
+          className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-[2px]"
+        >
+          <motion.div
+            key="notif-drawer-panel"
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
+            onClick={(e) => e.stopPropagation()}
+            className="relative flex h-full w-full max-w-md flex-col border-l border-white/[0.08] bg-[#0D1017] text-slate-100 shadow-2xl"
+            role="dialog"
+            aria-label="Alert Preferences"
           >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
+            <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-5">
+              <div>
+                <h2 className="font-display text-lg font-semibold tracking-tight text-white">Alert Preferences</h2>
+                <p className="mt-0.5 text-xs text-slate-400">
+                  {streamConnected ? 'Live stream active · checks every 60s' : 'Reconnecting live stream'}
+                </p>
+              </div>
+              <motion.button
+                type="button"
+                whileTap={{ scale: 0.92 }}
+                onClick={onClose}
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.08] text-slate-400 transition-colors hover:bg-white/[0.05] hover:text-white focus-visible:outline-2 focus-visible:outline-rose-500"
+                aria-label="Close alert preferences"
+              >
+                <X className="h-4 w-4" />
+              </motion.button>
+            </div>
 
         <div className="flex-1 space-y-6 overflow-y-auto px-6 py-6">
           {/* Desktop Notification Permission */}
@@ -115,16 +131,16 @@ export function NotificationDrawer({
                 role="switch"
                 aria-checked={settings.browserEnabled}
                 onClick={() => toggle('browserEnabled')}
-                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border transition-colors ${
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border px-0.5 transition-colors ${
                   settings.browserEnabled
-                    ? 'border-rose-500/60 bg-rose-600'
-                    : 'border-white/10 bg-[#1B2030]'
+                    ? 'justify-end border-rose-500/60 bg-rose-600'
+                    : 'justify-start border-white/10 bg-[#1B2030]'
                 }`}
               >
-                <span
-                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
-                    settings.browserEnabled ? 'translate-x-5' : 'translate-x-0'
-                  }`}
+                <motion.span
+                  layout
+                  transition={{ type: 'spring', stiffness: 500, damping: 32 }}
+                  className="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow"
                 />
               </button>
             </div>
@@ -147,16 +163,16 @@ export function NotificationDrawer({
                 role="switch"
                 aria-checked={settings.soundEnabled}
                 onClick={() => toggle('soundEnabled')}
-                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border transition-colors ${
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border px-0.5 transition-colors ${
                   settings.soundEnabled
-                    ? 'border-rose-500/60 bg-rose-600'
-                    : 'border-white/10 bg-[#1B2030]'
+                    ? 'justify-end border-rose-500/60 bg-rose-600'
+                    : 'justify-start border-white/10 bg-[#1B2030]'
                 }`}
               >
-                <span
-                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
-                    settings.soundEnabled ? 'translate-x-5' : 'translate-x-0'
-                  }`}
+                <motion.span
+                  layout
+                  transition={{ type: 'spring', stiffness: 500, damping: 32 }}
+                  className="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow"
                 />
               </button>
             </div>
@@ -244,34 +260,39 @@ export function NotificationDrawer({
               Send a sample alert to verify toast popups, chime audio, and browser notifications.
             </p>
             <div className="flex flex-wrap gap-2">
-              <button
+              <motion.button
                 type="button"
+                whileTap={{ scale: 0.96 }}
                 onClick={() => void onSendTest('demon_placed')}
                 className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.1] bg-[#161B28] px-3 py-2 text-xs font-medium text-slate-200 transition-colors hover:bg-[#1E2436] whitespace-nowrap"
               >
                 <Play className="h-3 w-3 text-rose-400" />
                 Test Placement
-              </button>
-              <button
+              </motion.button>
+              <motion.button
                 type="button"
+                whileTap={{ scale: 0.96 }}
                 onClick={() => void onSendTest('demon_updated')}
                 className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.1] bg-[#161B28] px-3 py-2 text-xs font-medium text-slate-200 transition-colors hover:bg-[#1E2436] whitespace-nowrap"
               >
                 <Play className="h-3 w-3 text-amber-400" />
                 Test Rank Update
-              </button>
-              <button
+              </motion.button>
+              <motion.button
                 type="button"
+                whileTap={{ scale: 0.96 }}
                 onClick={() => void onSendTest('top10_victor')}
                 className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.1] bg-[#161B28] px-3 py-2 text-xs font-medium text-slate-200 transition-colors hover:bg-[#1E2436] whitespace-nowrap"
               >
                 <Play className="h-3 w-3 text-emerald-400" />
                 Test Top 10 Victor
-              </button>
+              </motion.button>
             </div>
           </section>
         </div>
-      </div>
-    </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

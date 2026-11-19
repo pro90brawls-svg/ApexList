@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, Crown, ExternalLink, Trophy } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
+import { ChevronDown, Crown, ExternalLink, Trophy } from 'lucide-react';
 import type { Top10LevelSummary } from '../types';
 import { formatRelativeTime } from '../utils/notifications';
 import { DemonThumbnail } from './DemonThumbnail';
@@ -17,7 +18,12 @@ export function Top10WatchView({ levels, loading, onSelectDemon }: Top10WatchVie
   return (
     <div className="space-y-8">
       {/* #1 Monolith Hero Spotlight */}
-      <section className="relative overflow-hidden rounded-xl border border-white/[0.08] bg-[#10131C]">
+      <motion.section
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+        className="relative overflow-hidden rounded-xl border border-white/[0.08] bg-[#10131C]"
+      >
         <img
           src="/src/assets/images/obsidian_monolith_banner_1795113248604.jpg"
           alt="Obsidian monolith backdrop"
@@ -50,15 +56,17 @@ export function Top10WatchView({ levels, loading, onSelectDemon }: Top10WatchVie
 
             {top1 && (
               <div className="flex flex-wrap items-center gap-3 pt-2">
-                <button
+                <motion.button
                   type="button"
+                  whileTap={{ scale: 0.97 }}
                   onClick={() => onSelectDemon(top1.levelId ? `gd:${top1.levelId}` : `pc:${top1.pointercrateId}`)}
                   className="rounded-lg bg-rose-600 px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-rose-500 whitespace-nowrap"
                 >
                   Inspect #1 Details
-                </button>
+                </motion.button>
                 {top1.video && (
-                  <a
+                  <motion.a
+                    whileTap={{ scale: 0.97 }}
                     href={top1.video}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -66,17 +74,20 @@ export function Top10WatchView({ levels, loading, onSelectDemon }: Top10WatchVie
                   >
                     Verification Video
                     <ExternalLink className="h-3.5 w-3.5 text-slate-400" />
-                  </a>
+                  </motion.a>
                 )}
               </div>
             )}
           </div>
 
           {top1 && (
-            <button
+            <motion.button
               type="button"
+              whileHover={{ scale: 1.015 }}
+              whileTap={{ scale: 0.985 }}
+              transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
               onClick={() => onSelectDemon(top1.levelId ? `gd:${top1.levelId}` : `pc:${top1.pointercrateId}`)}
-              className="group relative hidden overflow-hidden rounded-lg border border-white/[0.12] md:block text-left"
+              className="group relative hidden overflow-hidden rounded-lg border border-white/[0.12] text-left md:block"
             >
               <DemonThumbnail
                 src={top1.thumbnail}
@@ -90,10 +101,10 @@ export function Top10WatchView({ levels, loading, onSelectDemon }: Top10WatchVie
                   {top1.requirement ? `${top1.requirement}% req` : '100%'}
                 </span>
               </div>
-            </button>
+            </motion.button>
           )}
         </div>
-      </section>
+      </motion.section>
 
       {/* Top 10 List with Expandable Victor Rosters */}
       <section className="space-y-3">
@@ -114,12 +125,18 @@ export function Top10WatchView({ levels, loading, onSelectDemon }: Top10WatchVie
           </div>
         ) : (
           <div className="divide-y divide-white/[0.07] overflow-hidden rounded-xl border border-white/[0.08] bg-[#10131C]">
-            {levels.map((level) => {
+            {levels.map((level, idx) => {
               const isOpen = expandedRank === level.rank;
               const demonKey = level.levelId ? `gd:${level.levelId}` : `pc:${level.pointercrateId}`;
               return (
-                <div key={level.rank} className="transition-colors">
-                  <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-4 hover:bg-white/[0.02]">
+                <motion.div
+                  key={level.rank}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2, delay: idx * 0.025, ease: [0.16, 1, 0.3, 1] }}
+                  className="transition-colors"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-white/[0.02]">
                     <div className="flex min-w-0 flex-1 items-center gap-4">
                       <span
                         className={`w-9 shrink-0 font-mono text-lg font-bold tabular-nums ${
@@ -136,7 +153,7 @@ export function Top10WatchView({ levels, loading, onSelectDemon }: Top10WatchVie
                       <button
                         type="button"
                         onClick={() => onSelectDemon(demonKey)}
-                        className="group shrink-0"
+                        className="group shrink-0 transition-transform active:scale-95"
                         aria-label={`Open ${level.name}`}
                       >
                         <DemonThumbnail
@@ -163,7 +180,7 @@ export function Top10WatchView({ levels, loading, onSelectDemon }: Top10WatchVie
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-4 shrink-0">
+                    <div className="flex shrink-0 items-center gap-4">
                       <div className="text-right">
                         <div className="font-mono text-sm font-semibold text-white tabular-nums">
                           {level.victorCount > 0
@@ -175,71 +192,84 @@ export function Top10WatchView({ levels, loading, onSelectDemon }: Top10WatchVie
                         </div>
                       </div>
 
-                      <button
+                      <motion.button
                         type="button"
+                        whileTap={{ scale: 0.96 }}
                         onClick={() => setExpandedRank(isOpen ? null : level.rank)}
                         className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-white/[0.08] bg-[#161B28] px-3 text-xs font-medium text-slate-200 transition-colors hover:bg-[#1E2435] whitespace-nowrap"
                       >
-                        {isOpen ? (
-                          <>
-                            Hide
-                            <ChevronUp className="h-3.5 w-3.5" />
-                          </>
-                        ) : (
-                          <>
-                            Victors
-                            <ChevronDown className="h-3.5 w-3.5" />
-                          </>
-                        )}
-                      </button>
+                        <span>{isOpen ? 'Hide' : 'Victors'}</span>
+                        <motion.span
+                          animate={{ rotate: isOpen ? 180 : 0 }}
+                          transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                          className="inline-flex"
+                        >
+                          <ChevronDown className="h-3.5 w-3.5" />
+                        </motion.span>
+                      </motion.button>
                     </div>
                   </div>
 
-                  {isOpen && (
-                    <div className="border-t border-white/[0.06] bg-[#0B0E15] px-5 py-4">
-                      {level.victors.length === 0 ? (
-                        <p className="text-xs text-slate-400">No approved victors yet beyond initial verification.</p>
-                      ) : (
-                        <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
-                          {level.victors.map((v) => (
-                            <div
-                              key={v.id}
-                              className="flex items-center justify-between gap-3 rounded-lg border border-white/[0.06] bg-[#111521] px-3.5 py-2.5"
-                            >
-                              <div className="min-w-0">
-                                <div className="flex items-center gap-1.5 truncate text-sm font-medium text-slate-100">
-                                  {v.isVerification ? (
-                                    <Crown className="h-3.5 w-3.5 shrink-0 text-amber-400" />
-                                  ) : (
-                                    <Trophy className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
-                                  )}
-                                  <span className="truncate">{v.playerName}</span>
-                                </div>
-                                <div className="mt-0.5 text-xs text-slate-400">
-                                  {v.isVerification ? 'Verification' : '100% Completion'}
-                                  {' · '}
-                                  {v.source}
-                                  {v.achievedAt ? ` · ${formatRelativeTime(v.achievedAt)}` : ''}
-                                </div>
-                              </div>
-
-                              {v.video && (
-                                <a
-                                  href={v.video}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="shrink-0 rounded border border-white/[0.08] px-2.5 py-1 text-xs font-medium text-rose-400 hover:bg-white/[0.04]"
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        key={`victors-${level.rank}`}
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                        className="overflow-hidden border-t border-white/[0.06] bg-[#0B0E15]"
+                      >
+                        <div className="px-5 py-4">
+                          {level.victors.length === 0 ? (
+                            <p className="text-xs text-slate-400">No approved victors yet beyond initial verification.</p>
+                          ) : (
+                            <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+                              {level.victors.map((v, vIdx) => (
+                                <motion.div
+                                  key={v.id}
+                                  initial={{ opacity: 0, y: 6 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ duration: 0.18, delay: Math.min(vIdx * 0.02, 0.16), ease: [0.16, 1, 0.3, 1] }}
+                                  className="flex items-center justify-between gap-3 rounded-lg border border-white/[0.06] bg-[#111521] px-3.5 py-2.5 transition-colors hover:border-white/[0.12]"
                                 >
-                                  Watch
-                                </a>
-                              )}
+                                  <div className="min-w-0">
+                                    <div className="flex items-center gap-1.5 truncate text-sm font-medium text-slate-100">
+                                      {v.isVerification ? (
+                                        <Crown className="h-3.5 w-3.5 shrink-0 text-amber-400" />
+                                      ) : (
+                                        <Trophy className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                                      )}
+                                      <span className="truncate">{v.playerName}</span>
+                                    </div>
+                                    <div className="mt-0.5 text-xs text-slate-400">
+                                      {v.isVerification ? 'Verification' : '100% Completion'}
+                                      {' · '}
+                                      {v.source}
+                                      {v.achievedAt ? ` · ${formatRelativeTime(v.achievedAt)}` : ''}
+                                    </div>
+                                  </div>
+
+                                  {v.video && (
+                                    <motion.a
+                                      whileTap={{ scale: 0.94 }}
+                                      href={v.video}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="shrink-0 rounded border border-white/[0.08] px-2.5 py-1 text-xs font-medium text-rose-400 transition-colors hover:bg-white/[0.04]"
+                                    >
+                                      Watch
+                                    </motion.a>
+                                  )}
+                                </motion.div>
+                              ))}
                             </div>
-                          ))}
+                          )}
                         </div>
-                      )}
-                    </div>
-                  )}
-                </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
               );
             })}
           </div>

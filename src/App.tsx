@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { AnimatePresence, MotionConfig, motion } from 'motion/react';
 import {
   Activity,
   ArrowDownRight,
@@ -324,14 +325,22 @@ export default function App() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#090B10] text-slate-100">
-      {/* Mobile Sidebar Overlay */}
-      {mobileNavOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/70 lg:hidden"
-          onClick={() => setMobileNavOpen(false)}
-        />
-      )}
+    <MotionConfig reducedMotion="user">
+      <div className="flex min-h-screen bg-[#090B10] text-slate-100">
+        {/* Mobile Sidebar Overlay */}
+        <AnimatePresence>
+          {mobileNavOpen && (
+            <motion.div
+              key="mobile-nav-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="fixed inset-0 z-40 bg-black/70 lg:hidden"
+              onClick={() => setMobileNavOpen(false)}
+            />
+          )}
+        </AnimatePresence>
 
       {/* Left Sidebar Navigation */}
       <aside
@@ -361,75 +370,46 @@ export default function App() {
         </div>
 
         <nav className="flex-1 space-y-1 px-3 py-5" aria-label="Primary">
-          <button
-            type="button"
-            onClick={() => handleSelectNav('demonlist')}
-            className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors whitespace-nowrap ${
-              activeView === 'demonlist'
-                ? 'bg-[#161B28] text-white'
-                : 'text-slate-400 hover:bg-white/[0.03] hover:text-slate-200'
-            }`}
-          >
-            <ListOrdered className={`h-4 w-4 shrink-0 ${activeView === 'demonlist' ? 'text-rose-400' : ''}`} />
-            <span>Demonlist</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleSelectNav('top10')}
-            className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors whitespace-nowrap ${
-              activeView === 'top10'
-                ? 'bg-[#161B28] text-white'
-                : 'text-slate-400 hover:bg-white/[0.03] hover:text-slate-200'
-            }`}
-          >
-            <Crown className={`h-4 w-4 shrink-0 ${activeView === 'top10' ? 'text-amber-400' : ''}`} />
-            <span>Top 10 Watch</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleSelectNav('calendar')}
-            className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors whitespace-nowrap ${
-              activeView === 'calendar'
-                ? 'bg-[#161B28] text-white'
-                : 'text-slate-400 hover:bg-white/[0.03] hover:text-slate-200'
-            }`}
-          >
-            <CalendarIcon className={`h-4 w-4 shrink-0 ${activeView === 'calendar' ? 'text-rose-400' : ''}`} />
-            <span>Calendar</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleSelectNav('changelog')}
-            className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors whitespace-nowrap ${
-              activeView === 'changelog'
-                ? 'bg-[#161B28] text-white'
-                : 'text-slate-400 hover:bg-white/[0.03] hover:text-slate-200'
-            }`}
-          >
-            <span className="flex items-center gap-3">
-              <Activity className={`h-4 w-4 shrink-0 ${activeView === 'changelog' ? 'text-rose-400' : ''}`} />
-              <span>Live Changelog</span>
-            </span>
-            {unreadCount > 0 && (
-              <span className="font-mono text-xs font-semibold text-rose-400 tabular-nums">{unreadCount}</span>
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleSelectNav('players')}
-            className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors whitespace-nowrap ${
-              activeView === 'players'
-                ? 'bg-[#161B28] text-white'
-                : 'text-slate-400 hover:bg-white/[0.03] hover:text-slate-200'
-            }`}
-          >
-            <Users className={`h-4 w-4 shrink-0 ${activeView === 'players' ? 'text-rose-400' : ''}`} />
-            <span>Player Rankings</span>
-          </button>
+          {(
+            [
+              { id: 'demonlist', label: 'Demonlist', icon: ListOrdered, accent: 'text-rose-400' },
+              { id: 'top10', label: 'Top 10 Watch', icon: Crown, accent: 'text-amber-400' },
+              { id: 'calendar', label: 'Calendar', icon: CalendarIcon, accent: 'text-rose-400' },
+              { id: 'changelog', label: 'Live Changelog', icon: Activity, accent: 'text-rose-400' },
+              { id: 'players', label: 'Player Rankings', icon: Users, accent: 'text-rose-400' },
+            ] as const
+          ).map((navItem) => {
+            const Icon = navItem.icon;
+            const isActive = activeView === navItem.id;
+            return (
+              <motion.button
+                key={navItem.id}
+                type="button"
+                whileTap={{ scale: 0.98 }}
+                onClick={() => handleSelectNav(navItem.id)}
+                className={`relative flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors whitespace-nowrap ${
+                  isActive ? 'text-white' : 'text-slate-400 hover:bg-white/[0.03] hover:text-slate-200'
+                }`}
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId="sidebar-active-nav"
+                    transition={{ type: 'spring', stiffness: 460, damping: 36 }}
+                    className="absolute inset-0 rounded-lg bg-[#161B28]"
+                  />
+                )}
+                <span className="relative z-10 flex items-center gap-3">
+                  <Icon className={`h-4 w-4 shrink-0 ${isActive ? navItem.accent : ''}`} />
+                  <span>{navItem.label}</span>
+                </span>
+                {navItem.id === 'changelog' && unreadCount > 0 && (
+                  <span className="relative z-10 font-mono text-xs font-semibold text-rose-400 tabular-nums">
+                    {unreadCount}
+                  </span>
+                )}
+              </motion.button>
+            );
+          })}
         </nav>
 
         <div className="border-t border-white/[0.08] p-4 space-y-3">
@@ -521,6 +501,14 @@ export default function App() {
 
         {/* Viewport Content */}
         <main className="mx-auto w-full max-w-[1280px] flex-1 px-4 py-6 sm:px-8 sm:py-8">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeView}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+            >
           {activeView === 'demonlist' && (
             <div className="space-y-6">
               {/* 4-Column KPI Summary Strip */}
@@ -562,26 +550,34 @@ export default function App() {
                         { id: 'pointercrate', label: 'Pointercrate' },
                         { id: 'aredl', label: 'AREDL' },
                       ] as const
-                    ).map((s) => (
-                      <button
-                        key={s.id}
-                        type="button"
-                        onClick={() => {
-                          setSource(s.id);
-                          if (s.id === 'pointercrate' && tier === 'legacy') {
-                            setTier('all');
-                          }
-                          setPage(1);
-                        }}
-                        className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
-                          source === s.id
-                            ? 'bg-[#1C2233] text-white'
-                            : 'text-slate-400 hover:text-slate-200'
-                        }`}
-                      >
-                        {s.label}
-                      </button>
-                    ))}
+                    ).map((s) => {
+                      const active = source === s.id;
+                      return (
+                        <button
+                          key={s.id}
+                          type="button"
+                          onClick={() => {
+                            setSource(s.id);
+                            if (s.id === 'pointercrate' && tier === 'legacy') {
+                              setTier('all');
+                            }
+                            setPage(1);
+                          }}
+                          className={`relative rounded-md px-3 py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
+                            active ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                          }`}
+                        >
+                          {active && (
+                            <motion.span
+                              layoutId="demon-source-pill"
+                              transition={{ type: 'spring', stiffness: 460, damping: 36 }}
+                              className="absolute inset-0 rounded-md bg-[#1C2233]"
+                            />
+                          )}
+                          <span className="relative z-10">{s.label}</span>
+                        </button>
+                      );
+                    })}
                   </div>
 
                   {/* Tier Filter */}
@@ -594,35 +590,44 @@ export default function App() {
                         { id: 'extended', label: 'Extended #76–150' },
                         ...(source === 'pointercrate' ? [] : [{ id: 'legacy', label: 'AREDL #151+' }]),
                       ] as Array<{ id: ListTier; label: string }>
-                    ).map((t) => (
-                      <button
-                        key={t.id}
-                        type="button"
-                        onClick={() => {
-                          setTier(t.id);
-                          setPage(1);
-                        }}
-                        className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
-                          tier === t.id
-                            ? 'bg-[#1C2233] text-white'
-                            : 'text-slate-400 hover:text-slate-200'
-                        }`}
-                      >
-                        {t.label}
-                      </button>
-                    ))}
+                    ).map((t) => {
+                      const active = tier === t.id;
+                      return (
+                        <button
+                          key={t.id}
+                          type="button"
+                          onClick={() => {
+                            setTier(t.id);
+                            setPage(1);
+                          }}
+                          className={`relative rounded-md px-3 py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
+                            active ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                          }`}
+                        >
+                          {active && (
+                            <motion.span
+                              layoutId="demon-tier-pill"
+                              transition={{ type: 'spring', stiffness: 460, damping: 36 }}
+                              className="absolute inset-0 rounded-md bg-[#1C2233]"
+                            />
+                          )}
+                          <span className="relative z-10">{t.label}</span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
-                <button
+                <motion.button
                   type="button"
+                  whileTap={{ scale: 0.96 }}
                   onClick={() => void handleSyncNow()}
                   disabled={syncStatus.isSyncing}
                   className="inline-flex items-center gap-2 rounded-lg border border-white/[0.1] bg-[#121622] px-3.5 py-2 text-xs font-medium text-slate-200 transition-colors hover:bg-[#191F30] disabled:opacity-60 whitespace-nowrap"
                 >
                   <RefreshCw className={`h-3.5 w-3.5 ${syncStatus.isSyncing ? 'animate-spin' : ''}`} />
                   <span>{syncStatus.isSyncing ? 'Syncing...' : 'Sync Now'}</span>
-                </button>
+                </motion.button>
               </div>
 
               {/* High-Density Demonlist Table */}
@@ -665,9 +670,12 @@ export default function App() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/[0.06]">
-                      {demons.map((demon) => (
-                        <tr
-                          key={demon.key}
+                      {demons.map((demon, idx) => (
+                        <motion.tr
+                          key={`${source}-${tier}-${page}-${demon.key}`}
+                          initial={{ opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.18, delay: Math.min(idx * 0.012, 0.18), ease: [0.16, 1, 0.3, 1] }}
                           className="group cursor-pointer transition-colors hover:bg-white/[0.025]"
                           onClick={() => setSelectedDemonKey(demon.key)}
                         >
@@ -769,7 +777,7 @@ export default function App() {
                               <span className="text-xs text-slate-600">—</span>
                             )}
                           </td>
-                        </tr>
+                        </motion.tr>
                       ))}
                     </tbody>
                   </table>
@@ -783,24 +791,26 @@ export default function App() {
                     Showing page {page} of {totalPages} ({totalDemons.toLocaleString()} demons)
                   </span>
                   <div className="flex items-center gap-2">
-                    <button
+                    <motion.button
                       type="button"
+                      whileTap={{ scale: 0.95 }}
                       disabled={page <= 1}
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
-                      className="inline-flex h-9 items-center gap-1 rounded-lg border border-white/[0.08] bg-[#10131C] px-3 text-xs font-medium text-slate-200 hover:bg-[#171C29] disabled:opacity-40"
+                      className="inline-flex h-9 items-center gap-1 rounded-lg border border-white/[0.08] bg-[#10131C] px-3 text-xs font-medium text-slate-200 transition-colors hover:bg-[#171C29] disabled:opacity-40"
                     >
                       <ChevronLeft className="h-3.5 w-3.5" />
                       Prev
-                    </button>
-                    <button
+                    </motion.button>
+                    <motion.button
                       type="button"
+                      whileTap={{ scale: 0.95 }}
                       disabled={page >= totalPages}
                       onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                      className="inline-flex h-9 items-center gap-1 rounded-lg border border-white/[0.08] bg-[#10131C] px-3 text-xs font-medium text-slate-200 hover:bg-[#171C29] disabled:opacity-40"
+                      className="inline-flex h-9 items-center gap-1 rounded-lg border border-white/[0.08] bg-[#10131C] px-3 text-xs font-medium text-slate-200 transition-colors hover:bg-[#171C29] disabled:opacity-40"
                     >
                       Next
                       <ChevronRight className="h-3.5 w-3.5" />
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
               )}
@@ -837,68 +847,79 @@ export default function App() {
               loading={playersLoading}
             />
           )}
+            </motion.div>
+          </AnimatePresence>
         </main>
       </div>
 
       {/* Live Toast Alerts */}
-      {toasts.length > 0 && (
-        <div className="fixed inset-x-4 bottom-4 z-50 flex flex-col gap-2.5 sm:inset-x-auto sm:bottom-5 sm:right-5 sm:w-full sm:max-w-sm">
-          {toasts.map(({ id, event }) => (
-            <div
-              key={id}
-              className="flex items-start justify-between gap-3 rounded-xl border border-white/[0.12] bg-[#121622] p-4 shadow-2xl"
-              role="status"
-            >
-              <div className="flex min-w-0 items-start gap-3">
-                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-rose-500/15 text-rose-400">
-                  {event.type === 'top10_victor' ? (
-                    <Trophy className="h-4 w-4 text-amber-400" />
-                  ) : (
-                    <Bell className="h-4 w-4" />
-                  )}
-                </div>
-                <div className="min-w-0">
-                  <div className="text-xs font-medium text-rose-400">{event.source}</div>
-                  <div className="mt-0.5 text-sm font-semibold text-white">{event.title}</div>
-                  <div className="mt-0.5 text-xs text-slate-400">{event.summary}</div>
-                  <div className="mt-2 flex items-center gap-3">
-                    {event.levelId && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSelectedDemonKey(`gd:${event.levelId}`);
-                          dismissToast(id);
-                        }}
-                        className="text-xs font-medium text-white underline-offset-2 hover:underline"
-                      >
-                        Inspect Level
-                      </button>
-                    )}
-                    {event.videoUrl && (
-                      <a
-                        href={event.videoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs font-medium text-rose-400 hover:text-rose-300"
-                      >
-                        Watch Video
-                      </a>
-                    )}
+      <AnimatePresence>
+        {toasts.length > 0 && (
+          <div className="fixed inset-x-4 bottom-4 z-50 flex flex-col gap-2.5 sm:inset-x-auto sm:bottom-5 sm:right-5 sm:w-full sm:max-w-sm">
+            <AnimatePresence>
+              {toasts.map(({ id, event }) => (
+                <motion.div
+                  key={id}
+                  layout
+                  initial={{ opacity: 0, y: 16, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: 24, scale: 0.96 }}
+                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                  className="flex items-start justify-between gap-3 rounded-xl border border-white/[0.12] bg-[#121622] p-4 shadow-2xl"
+                  role="status"
+                >
+                  <div className="flex min-w-0 items-start gap-3">
+                    <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-rose-500/15 text-rose-400">
+                      {event.type === 'top10_victor' ? (
+                        <Trophy className="h-4 w-4 text-amber-400" />
+                      ) : (
+                        <Bell className="h-4 w-4" />
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs font-medium text-rose-400">{event.source}</div>
+                      <div className="mt-0.5 text-sm font-semibold text-white">{event.title}</div>
+                      <div className="mt-0.5 text-xs text-slate-400">{event.summary}</div>
+                      <div className="mt-2 flex items-center gap-3">
+                        {event.levelId && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedDemonKey(`gd:${event.levelId}`);
+                              dismissToast(id);
+                            }}
+                            className="text-xs font-medium text-white underline-offset-2 hover:underline"
+                          >
+                            Inspect Level
+                          </button>
+                        )}
+                        {event.videoUrl && (
+                          <a
+                            href={event.videoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs font-medium text-rose-400 hover:text-rose-300"
+                          >
+                            Watch Video
+                          </a>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => dismissToast(id)}
-                className="flex h-7 w-7 shrink-0 items-center justify-center rounded text-slate-400 hover:bg-white/[0.06] hover:text-white"
-                aria-label="Dismiss notification"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+                  <button
+                    type="button"
+                    onClick={() => dismissToast(id)}
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded text-slate-400 hover:bg-white/[0.06] hover:text-white"
+                    aria-label="Dismiss notification"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Demon Inspector Modal */}
       <DemonDetailModal demonKey={selectedDemonKey} onClose={() => setSelectedDemonKey(null)} />
@@ -915,5 +936,6 @@ export default function App() {
         streamConnected={streamConnected}
       />
     </div>
+    </MotionConfig>
   );
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion } from 'motion/react';
 import { ArrowDownRight, ArrowUpRight, ExternalLink, Plus, RefreshCw, Trophy } from 'lucide-react';
 import type { TrackerEvent, TrackerEventType } from '../types';
 import { formatRelativeTime } from '../utils/notifications';
@@ -37,54 +38,73 @@ export function ChangelogView({
           </p>
         </div>
 
-        <button
+        <motion.button
           type="button"
+          whileTap={{ scale: 0.97 }}
           onClick={() => void onSyncNow()}
           disabled={isSyncing}
           className="inline-flex items-center gap-2 rounded-lg border border-white/[0.1] bg-[#141824] px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#1B2030] disabled:opacity-60 whitespace-nowrap"
         >
           <RefreshCw className={`h-3.5 w-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
           {isSyncing ? 'Checking Lists...' : 'Check for Updates'}
-        </button>
+        </motion.button>
       </div>
 
       {/* Filter Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.08] pb-4">
-        <div className="flex flex-wrap items-center gap-1 rounded-lg bg-[#10131C] p-1 border border-white/[0.06]">
+        <div className="flex flex-wrap items-center gap-1 rounded-lg border border-white/[0.06] bg-[#10131C] p-1">
           {[
             { id: 'all', label: 'All Events' },
             { id: 'demon_placed', label: 'Placed' },
             { id: 'demon_updated', label: 'Rank Updated' },
             { id: 'top10_victor', label: 'Top 10 Victors' },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setTypeFilter(tab.id as 'all' | TrackerEventType)}
-              className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
-                typeFilter === tab.id
-                  ? 'bg-[#1C2233] text-white'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+          ].map((tab) => {
+            const active = typeFilter === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setTypeFilter(tab.id as 'all' | TrackerEventType)}
+                className={`relative rounded-md px-3 py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
+                  active ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                {active && (
+                  <motion.span
+                    layoutId="changelog-type-pill"
+                    transition={{ type: 'spring', stiffness: 460, damping: 36 }}
+                    className="absolute inset-0 rounded-md bg-[#1C2233]"
+                  />
+                )}
+                <span className="relative z-10">{tab.label}</span>
+              </button>
+            );
+          })}
         </div>
 
-        <div className="flex items-center gap-1 rounded-lg bg-[#10131C] p-1 border border-white/[0.06]">
-          {(['all', 'AREDL', 'Pointercrate'] as const).map((src) => (
-            <button
-              key={src}
-              type="button"
-              onClick={() => setSourceFilter(src)}
-              className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
-                sourceFilter === src ? 'bg-[#1C2233] text-white' : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              {src === 'all' ? 'All Sources' : src}
-            </button>
-          ))}
+        <div className="flex items-center gap-1 rounded-lg border border-white/[0.06] bg-[#10131C] p-1">
+          {(['all', 'AREDL', 'Pointercrate'] as const).map((src) => {
+            const active = sourceFilter === src;
+            return (
+              <button
+                key={src}
+                type="button"
+                onClick={() => setSourceFilter(src)}
+                className={`relative rounded-md px-3 py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
+                  active ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                {active && (
+                  <motion.span
+                    layoutId="changelog-source-pill"
+                    transition={{ type: 'spring', stiffness: 460, damping: 36 }}
+                    className="absolute inset-0 rounded-md bg-[#1C2233]"
+                  />
+                )}
+                <span className="relative z-10">{src === 'all' ? 'All Sources' : src}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -95,15 +115,20 @@ export function ChangelogView({
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="rounded-xl border border-white/[0.08] bg-[#10131C] p-10 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="rounded-xl border border-white/[0.08] bg-[#10131C] p-10 text-center"
+        >
           <p className="text-sm font-medium text-slate-300">No events match the selected filter.</p>
           <p className="mt-1 text-xs text-slate-400">
             Try switching back to All Events or run a manual sync to check for new changes.
           </p>
-        </div>
+        </motion.div>
       ) : (
         <div className="divide-y divide-white/[0.06] overflow-hidden rounded-xl border border-white/[0.08] bg-[#10131C]">
-          {filtered.map((ev) => {
+          {filtered.map((ev, idx) => {
             const raised =
               ev.type === 'demon_updated' &&
               ev.oldPosition !== null &&
@@ -111,8 +136,11 @@ export function ChangelogView({
               ev.newPosition < ev.oldPosition;
 
             return (
-              <div
+              <motion.div
                 key={ev.id}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.18, delay: Math.min(idx * 0.014, 0.18), ease: [0.16, 1, 0.3, 1] }}
                 className="flex flex-wrap items-center justify-between gap-4 px-5 py-3.5 transition-colors hover:bg-white/[0.02]"
               >
                 <div className="flex min-w-0 flex-1 items-center gap-3.5">
@@ -144,7 +172,7 @@ export function ChangelogView({
                         <button
                           type="button"
                           onClick={() => onSelectDemon(`gd:${ev.levelId}`)}
-                          className="truncate text-left text-sm font-semibold text-white hover:text-rose-400 transition-colors"
+                          className="truncate text-left text-sm font-semibold text-white transition-colors hover:text-rose-400"
                         >
                           {ev.title}
                         </button>
@@ -159,7 +187,7 @@ export function ChangelogView({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 shrink-0">
+                <div className="flex shrink-0 items-center gap-4">
                   {ev.videoUrl && (
                     <a
                       href={ev.videoUrl}
@@ -175,7 +203,7 @@ export function ChangelogView({
                     {formatRelativeTime(ev.createdAt)}
                   </span>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>

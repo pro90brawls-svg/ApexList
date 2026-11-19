@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -199,32 +200,46 @@ export function CalendarView({ onSelectDemon }: CalendarViewProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          <button
+          <motion.button
             type="button"
+            whileTap={{ scale: 0.92 }}
             onClick={() => setMonth((m) => shiftMonth(m, -1))}
             className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.08] bg-[#10131C] text-slate-300 transition-colors hover:bg-[#171C29] hover:text-white"
             aria-label="Previous month"
           >
             <ChevronLeft className="h-4 w-4" />
-          </button>
+          </motion.button>
 
-          <div className="min-w-[160px] text-center font-display text-base font-semibold text-white">
-            {formatMonthTitle(month)}
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={month}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+              className="min-w-[160px] text-center font-display text-base font-semibold text-white"
+            >
+              {formatMonthTitle(month)}
+            </motion.div>
+          </AnimatePresence>
 
-          <button
+          <motion.button
             type="button"
+            whileTap={{ scale: 0.92 }}
             onClick={() => setMonth((m) => shiftMonth(m, 1))}
             disabled={month >= currentMonthKey}
             className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.08] bg-[#10131C] text-slate-300 transition-colors hover:bg-[#171C29] hover:text-white disabled:opacity-40"
             aria-label="Next month"
           >
             <ChevronRight className="h-4 w-4" />
-          </button>
+          </motion.button>
 
           {month !== currentMonthKey && (
-            <button
+            <motion.button
               type="button"
+              initial={{ opacity: 0, scale: 0.94 }}
+              animate={{ opacity: 1, scale: 1 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => {
                 setMonth(currentMonthKey);
                 setSelectedDay(todayKey);
@@ -232,7 +247,7 @@ export function CalendarView({ onSelectDemon }: CalendarViewProps) {
               className="ml-1 rounded-lg border border-white/[0.1] bg-[#141824] px-3 py-2 text-xs font-medium text-slate-200 hover:bg-[#1C2232] whitespace-nowrap"
             >
               Today
-            </button>
+            </motion.button>
           )}
         </div>
       </div>
@@ -280,18 +295,28 @@ export function CalendarView({ onSelectDemon }: CalendarViewProps) {
               { id: 'aredl_placed', label: 'AREDL Placed' },
               { id: 'updates', label: 'Rank Updates' },
             ] as const
-          ).map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setFilter(tab.id)}
-              className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
-                filter === tab.id ? 'bg-[#1C2233] text-white' : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+          ).map((tab) => {
+            const active = filter === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setFilter(tab.id)}
+                className={`relative rounded-md px-3 py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
+                  active ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                {active && (
+                  <motion.span
+                    layoutId="calendar-filter-pill"
+                    transition={{ type: 'spring', stiffness: 460, damping: 36 }}
+                    className="absolute inset-0 rounded-md bg-[#1C2233]"
+                  />
+                )}
+                <span className="relative z-10">{tab.label}</span>
+              </button>
+            );
+          })}
         </div>
 
         {scanning && (
@@ -324,95 +349,110 @@ export function CalendarView({ onSelectDemon }: CalendarViewProps) {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-7">
-              {calendarCells.map((cell, idx) => {
-                if (!cell.dateKey || cell.dayNum === null) {
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={month}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+                className="grid grid-cols-7"
+              >
+                {calendarCells.map((cell, idx) => {
+                  if (!cell.dateKey || cell.dayNum === null) {
+                    return (
+                      <div
+                        key={`empty-${idx}`}
+                        className="min-h-[64px] border-b border-r border-white/[0.05] bg-[#0B0E15]/60 sm:min-h-[108px]"
+                      />
+                    );
+                  }
+
+                  const dayEvents = eventsByDay.get(cell.dateKey) ?? [];
+                  const isSelected = cell.dateKey === selectedDay;
+                  const isToday = cell.dateKey === todayKey;
+
                   return (
-                    <div
-                      key={`empty-${idx}`}
-                      className="min-h-[64px] border-b border-r border-white/[0.05] bg-[#0B0E15]/60 sm:min-h-[108px]"
-                    />
-                  );
-                }
-
-                const dayEvents = eventsByDay.get(cell.dateKey) ?? [];
-                const isSelected = cell.dateKey === selectedDay;
-                const isToday = cell.dateKey === todayKey;
-
-                return (
-                  <button
-                    key={cell.dateKey}
-                    type="button"
-                    onClick={() => setSelectedDay(cell.dateKey!)}
-                    className={`group flex min-h-[64px] flex-col items-stretch justify-start border-b border-r border-white/[0.06] p-1.5 text-left transition-colors sm:min-h-[108px] sm:p-2 ${
-                      isSelected
-                        ? 'bg-[#171D2D] ring-1 ring-inset ring-rose-500/60'
-                        : 'hover:bg-white/[0.025]'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-1">
-                      <span
-                        className={`inline-flex h-6 min-w-6 items-center justify-center rounded px-1 font-mono text-xs font-semibold tabular-nums ${
-                          isToday
-                            ? 'bg-rose-600 text-white'
-                            : isSelected
-                            ? 'text-white'
-                            : 'text-slate-400 group-hover:text-slate-200'
-                        }`}
-                      >
-                        {cell.dayNum}
-                      </span>
-                      {dayEvents.length > 0 && (
-                        <span className="font-mono text-[10px] text-slate-500 tabular-nums">
-                          {dayEvents.length}
-                        </span>
+                    <motion.button
+                      key={cell.dateKey}
+                      type="button"
+                      whileTap={{ scale: 0.96 }}
+                      onClick={() => setSelectedDay(cell.dateKey!)}
+                      className={`group relative flex min-h-[64px] flex-col items-stretch justify-start border-b border-r border-white/[0.06] p-1.5 text-left transition-colors sm:min-h-[108px] sm:p-2 ${
+                        isSelected ? 'bg-[#171D2D]' : 'hover:bg-white/[0.025]'
+                      }`}
+                    >
+                      {isSelected && (
+                        <motion.span
+                          layoutId="calendar-selected-day"
+                          transition={{ type: 'spring', stiffness: 460, damping: 36 }}
+                          className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-rose-500/70"
+                        />
                       )}
-                    </div>
-
-                    {/* Compact dots on mobile */}
-                    {dayEvents.length > 0 && (
-                      <div className="mt-1.5 flex flex-wrap gap-1 sm:hidden">
-                        {dayEvents.slice(0, 6).map((ev) => (
-                          <span
-                            key={ev.id}
-                            className={`h-1.5 w-1.5 rounded-xs ${categoryMeta(ev.category).dotClass}`}
-                          />
-                        ))}
+                      <div className="relative z-10 flex items-center justify-between gap-1">
+                        <span
+                          className={`inline-flex h-6 min-w-6 items-center justify-center rounded px-1 font-mono text-xs font-semibold tabular-nums ${
+                            isToday
+                              ? 'bg-rose-600 text-white'
+                              : isSelected
+                              ? 'text-white'
+                              : 'text-slate-400 group-hover:text-slate-200'
+                          }`}
+                        >
+                          {cell.dayNum}
+                        </span>
+                        {dayEvents.length > 0 && (
+                          <span className="font-mono text-[10px] text-slate-500 tabular-nums">
+                            {dayEvents.length}
+                          </span>
+                        )}
                       </div>
-                    )}
 
-                    {/* Event labels on tablet/desktop */}
-                    <div className="mt-1.5 hidden space-y-1 overflow-hidden sm:block">
-                      {dayEvents.slice(0, 3).map((ev) => {
-                        const meta = categoryMeta(ev.category);
-                        const shortLabel =
-                          ev.category === 'top10_victor'
-                            ? `${ev.playerName ?? 'Victor'} · ${ev.levelName}`
-                            : ev.newPosition
-                            ? `#${ev.newPosition} ${ev.levelName}`
-                            : ev.levelName;
-
-                        return (
-                          <div
-                            key={ev.id}
-                            className="flex items-center gap-1.5 truncate text-[11px] leading-tight text-slate-200"
-                            title={ev.title}
-                          >
-                            <span className={`h-1.5 w-1.5 shrink-0 rounded-xs ${meta.dotClass}`} />
-                            <span className="truncate">{shortLabel}</span>
-                          </div>
-                        );
-                      })}
-                      {dayEvents.length > 3 && (
-                        <div className="pl-3 font-mono text-[10px] text-slate-400 tabular-nums">
-                          +{dayEvents.length - 3} more
+                      {/* Compact dots on mobile */}
+                      {dayEvents.length > 0 && (
+                        <div className="relative z-10 mt-1.5 flex flex-wrap gap-1 sm:hidden">
+                          {dayEvents.slice(0, 6).map((ev) => (
+                            <span
+                              key={ev.id}
+                              className={`h-1.5 w-1.5 rounded-xs ${categoryMeta(ev.category).dotClass}`}
+                            />
+                          ))}
                         </div>
                       )}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
+
+                      {/* Event labels on tablet/desktop */}
+                      <div className="relative z-10 mt-1.5 hidden space-y-1 overflow-hidden sm:block">
+                        {dayEvents.slice(0, 3).map((ev) => {
+                          const meta = categoryMeta(ev.category);
+                          const shortLabel =
+                            ev.category === 'top10_victor'
+                              ? `${ev.playerName ?? 'Victor'} · ${ev.levelName}`
+                              : ev.newPosition
+                              ? `#${ev.newPosition} ${ev.levelName}`
+                              : ev.levelName;
+
+                          return (
+                            <div
+                              key={ev.id}
+                              className="flex items-center gap-1.5 truncate text-[11px] leading-tight text-slate-200"
+                              title={ev.title}
+                            >
+                              <span className={`h-1.5 w-1.5 shrink-0 rounded-xs ${meta.dotClass}`} />
+                              <span className="truncate">{shortLabel}</span>
+                            </div>
+                          );
+                        })}
+                        {dayEvents.length > 3 && (
+                          <div className="pl-3 font-mono text-[10px] text-slate-400 tabular-nums">
+                            +{dayEvents.length - 3} more
+                          </div>
+                        )}
+                      </div>
+                    </motion.button>
+                  );
+                })}
+              </motion.div>
+            </AnimatePresence>
           )}
         </div>
 
@@ -428,7 +468,15 @@ export function CalendarView({ onSelectDemon }: CalendarViewProps) {
             </h3>
           </div>
 
-          <div className="flex-1 divide-y divide-white/[0.06] overflow-y-auto">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={selectedDay}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+              className="flex-1 divide-y divide-white/[0.06] overflow-y-auto"
+            >
             {selectedDayEvents.length === 0 ? (
               <div className="p-8 text-center">
                 <p className="text-sm font-medium text-slate-300">No events recorded on this day.</p>
@@ -510,7 +558,8 @@ export function CalendarView({ onSelectDemon }: CalendarViewProps) {
                 );
               })
             )}
-          </div>
+            </motion.div>
+          </AnimatePresence>
         </aside>
       </div>
     </div>
