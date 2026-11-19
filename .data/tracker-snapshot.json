@@ -1,318 +1,228 @@
 {
   "initialized": true,
   "pcPositions": {
-    "219": {
-      "position": 180,
-      "requirement": 75,
-      "name": "Zodiac"
-    },
-    "238": {
-      "position": 164,
-      "requirement": 69,
-      "name": "Kenos"
-    },
-    "239": {
-      "position": 200,
-      "requirement": 60,
-      "name": "Renevant"
-    },
-    "244": {
-      "position": 199,
-      "requirement": 59,
-      "name": "Calculator Core"
-    },
     "250": {
-      "position": 122,
+      "position": 113,
       "requirement": 64,
       "name": "Tartarus"
     },
-    "273": {
-      "position": 197,
-      "requirement": 84,
-      "name": "Thinking Space"
-    },
     "274": {
-      "position": 132,
+      "position": 122,
       "requirement": 72,
       "name": "The Golden"
     },
-    "293": {
-      "position": 193,
-      "requirement": 61,
-      "name": "Cold Sweat"
-    },
-    "335": {
-      "position": 165,
-      "requirement": 64,
-      "name": "Fragile"
-    },
     "349": {
-      "position": 121,
+      "position": 112,
       "requirement": 68,
       "name": "Sonic Wave Infinity"
     },
-    "351": {
-      "position": 196,
-      "requirement": 85,
-      "name": "Promethean"
-    },
-    "361": {
-      "position": 162,
-      "requirement": 69,
-      "name": "Trueffet"
-    },
-    "365": {
-      "position": 176,
-      "requirement": 79,
-      "name": "Hard Machine"
-    },
-    "377": {
-      "position": 190,
-      "requirement": 64,
-      "name": "Keres"
-    },
     "379": {
-      "position": 59,
+      "position": 53,
       "requirement": 71,
       "name": "Firework"
     },
     "380": {
-      "position": 40,
+      "position": 38,
       "requirement": 75,
       "name": "Slaughterhouse"
     },
     "383": {
-      "position": 117,
+      "position": 108,
       "requirement": 74,
       "name": "arcturus"
     },
-    "389": {
-      "position": 181,
-      "requirement": 70,
-      "name": "Lotus Flower"
-    },
     "391": {
-      "position": 49,
+      "position": 46,
       "requirement": 69,
       "name": "Sakupen Circles"
     },
     "393": {
-      "position": 138,
+      "position": 128,
       "requirement": 63,
       "name": "Verdant Landscape"
     },
     "412": {
-      "position": 157,
+      "position": 147,
       "requirement": 63,
       "name": "Aerial Gleam"
     },
     "413": {
-      "position": 31,
+      "position": 30,
       "requirement": 75,
       "name": "Abyss of Darkness"
     },
-    "420": {
-      "position": 167,
-      "requirement": 77,
-      "name": "Esfera"
-    },
     "425": {
-      "position": 133,
+      "position": 123,
       "requirement": 72,
       "name": "Oblivion"
     },
     "427": {
-      "position": 74,
+      "position": 68,
       "requirement": 66,
       "name": "The Hallucination"
     },
     "428": {
-      "position": 18,
+      "position": 17,
       "requirement": 63,
       "name": "Silent clubstep"
     },
     "429": {
-      "position": 97,
+      "position": 89,
       "requirement": 65,
       "name": "walter white"
     },
     "435": {
-      "position": 145,
+      "position": 135,
       "requirement": 78,
       "name": "Shukketsu"
     },
     "439": {
-      "position": 94,
+      "position": 86,
       "requirement": 57,
       "name": "Mayhem"
     },
     "442": {
-      "position": 28,
+      "position": 27,
       "requirement": 70,
       "name": "Acheron"
     },
     "464": {
-      "position": 70,
+      "position": 64,
       "requirement": 66,
       "name": "poocubed"
     },
     "467": {
-      "position": 89,
+      "position": 81,
       "requirement": 64,
       "name": "LIMBO"
     },
     "468": {
-      "position": 33,
+      "position": 32,
       "requirement": 72,
       "name": "Kyouki"
     },
     "469": {
-      "position": 107,
+      "position": 98,
       "requirement": 69,
       "name": "Sinister Silence"
     },
     "475": {
-      "position": 142,
+      "position": 132,
       "requirement": 83,
       "name": "UNKNOWN"
     },
     "478": {
-      "position": 148,
+      "position": 138,
       "requirement": 69,
       "name": "Critical Heat"
     },
-    "481": {
-      "position": 171,
-      "requirement": 80,
-      "name": "NEUTRA"
-    },
     "485": {
-      "position": 82,
+      "position": 75,
       "requirement": 73,
       "name": "Edge of Destiny"
     },
     "486": {
-      "position": 26,
+      "position": 25,
       "requirement": 67,
       "name": "Avernus"
     },
     "487": {
-      "position": 72,
+      "position": 66,
       "requirement": 75,
       "name": "MINUSdry"
     },
-    "494": {
-      "position": 188,
-      "requirement": 79,
-      "name": "Widestep"
-    },
     "495": {
-      "position": 87,
+      "position": 79,
       "requirement": 69,
       "name": "Solar Flare"
     },
     "496": {
-      "position": 77,
+      "position": 70,
       "requirement": 70,
       "name": "Saul Goodman"
     },
     "497": {
-      "position": 137,
+      "position": 127,
       "requirement": 73,
       "name": "Terminal Rampancy"
     },
     "501": {
-      "position": 42,
+      "position": 40,
       "requirement": 73,
       "name": "KOCMOC"
     },
     "511": {
-      "position": 91,
+      "position": 83,
       "requirement": 78,
       "name": "Codependence"
     },
     "516": {
-      "position": 44,
+      "position": 42,
       "requirement": 70,
       "name": "Deimos"
     },
     "520": {
-      "position": 32,
+      "position": 31,
       "requirement": 79,
       "name": "Tunnel of Despair"
     },
     "521": {
-      "position": 100,
+      "position": 92,
       "requirement": 69,
       "name": "Damascus"
     },
     "525": {
-      "position": 125,
+      "position": 116,
       "requirement": 69,
       "name": "Delta"
     },
     "526": {
-      "position": 76,
+      "position": 69,
       "requirement": 76,
       "name": "COMBUSTION"
     },
     "528": {
-      "position": 37,
+      "position": 36,
       "requirement": 63,
       "name": "The Lightning Rod"
     },
     "539": {
-      "position": 135,
+      "position": 125,
       "requirement": 76,
       "name": "NETWORK"
     },
     "540": {
-      "position": 104,
+      "position": 96,
       "requirement": 70,
       "name": "Climax"
     },
-    "542": {
-      "position": 194,
-      "requirement": 77,
-      "name": "Frost Spirit"
-    },
     "545": {
-      "position": 54,
+      "position": 50,
       "requirement": 71,
       "name": "Eyes in the Water"
     },
     "547": {
-      "position": 102,
+      "position": 94,
       "requirement": 74,
       "name": "SARYYX NEVER CLEAR"
     },
     "549": {
-      "position": 111,
+      "position": 102,
       "requirement": 74,
       "name": "Midnight"
     },
     "551": {
-      "position": 93,
+      "position": 85,
       "requirement": 70,
       "name": "Belladonna"
     },
-    "553": {
-      "position": 178,
-      "requirement": 67,
-      "name": "Crackhead Circles"
-    },
     "555": {
-      "position": 124,
+      "position": 115,
       "requirement": 70,
       "name": "Jigsaw"
     },
-    "556": {
-      "position": 182,
-      "requirement": 72,
-      "name": "Scream Machine"
-    },
     "558": {
-      "position": 73,
+      "position": 67,
       "requirement": 70,
       "name": "Deadlier Clubstep"
     },
@@ -322,77 +232,52 @@
       "name": "Tidal Wave"
     },
     "568": {
-      "position": 136,
+      "position": 126,
       "requirement": 66,
       "name": "ATOMIC CANNON Mk III"
     },
     "570": {
-      "position": 114,
+      "position": 105,
       "requirement": 70,
       "name": "PSYCHOPATH"
     },
     "572": {
-      "position": 155,
+      "position": 145,
       "requirement": 65,
       "name": "The Paroxysm of Rage"
     },
-    "573": {
-      "position": 169,
-      "requirement": 82,
-      "name": "Destruction 19"
-    },
-    "575": {
-      "position": 198,
-      "requirement": 77,
-      "name": "Dry Out Copyable 2"
-    },
-    "576": {
-      "position": 175,
-      "requirement": 100,
-      "name": "Guideless Goobering"
-    },
     "577": {
-      "position": 30,
+      "position": 29,
       "requirement": 73,
       "name": "Menace"
     },
     "578": {
-      "position": 134,
+      "position": 124,
       "requirement": 66,
       "name": "Viprin UFO"
     },
     "579": {
-      "position": 105,
+      "position": 97,
       "requirement": 74,
       "name": "ORDINARY"
     },
-    "581": {
-      "position": 184,
-      "requirement": 77,
-      "name": "Axinie"
-    },
     "582": {
-      "position": 140,
+      "position": 130,
       "requirement": 70,
       "name": "Checked Steam"
     },
     "583": {
-      "position": 128,
+      "position": 118,
       "requirement": 71,
       "name": "Natural Disaster"
     },
-    "584": {
-      "position": 177,
-      "requirement": 73,
-      "name": "DISSONANCE"
-    },
     "587": {
-      "position": 63,
+      "position": 57,
       "requirement": 68,
       "name": "KOSETSU"
     },
     "588": {
-      "position": 109,
+      "position": 100,
       "requirement": 69,
       "name": "Coalescence"
     },
@@ -402,12 +287,12 @@
       "name": "Nullscapes"
     },
     "590": {
-      "position": 103,
+      "position": 95,
       "requirement": 73,
       "name": "The Yangire"
     },
     "592": {
-      "position": 29,
+      "position": 28,
       "requirement": 75,
       "name": "Spectre"
     },
@@ -417,77 +302,62 @@
       "name": "BOOBAWAMBA"
     },
     "595": {
-      "position": 123,
+      "position": 114,
       "requirement": 71,
       "name": "Waterfall"
     },
-    "596": {
-      "position": 186,
-      "requirement": 72,
-      "name": "Judgement Knights"
-    },
-    "597": {
-      "position": 189,
-      "requirement": 100,
-      "name": "Lithium"
-    },
     "599": {
-      "position": 126,
+      "position": 117,
       "requirement": 71,
       "name": "BPATA MPAKA"
     },
-    "601": {
-      "position": 195,
-      "requirement": 63,
-      "name": "Ascent"
-    },
     "602": {
-      "position": 24,
+      "position": 23,
       "requirement": 77,
       "name": "Anathema"
     },
     "605": {
-      "position": 119,
+      "position": 110,
       "requirement": 71,
       "name": "BEELINE"
     },
     "606": {
-      "position": 92,
+      "position": 84,
       "requirement": 66,
       "name": "Collapse"
     },
     "610": {
-      "position": 86,
+      "position": 78,
       "requirement": 67,
       "name": "The Plunge"
     },
     "612": {
-      "position": 41,
+      "position": 39,
       "requirement": 71,
       "name": "Subterminal Point"
     },
     "613": {
-      "position": 21,
+      "position": 20,
       "requirement": 66,
       "name": "andromeda"
     },
     "614": {
-      "position": 61,
+      "position": 55,
       "requirement": 73,
       "name": "Apocalyptic Trilogy"
     },
     "615": {
-      "position": 80,
+      "position": 73,
       "requirement": 68,
       "name": "Gaggatrondra"
     },
     "617": {
-      "position": 150,
+      "position": 140,
       "requirement": 67,
       "name": "Crystal Crusher"
     },
     "618": {
-      "position": 154,
+      "position": 144,
       "requirement": 100,
       "name": "Starlit Stroll"
     },
@@ -497,7 +367,7 @@
       "name": "Every End"
     },
     "622": {
-      "position": 113,
+      "position": 104,
       "requirement": 81,
       "name": "Cimmerian Shade"
     },
@@ -507,42 +377,27 @@
       "name": "Amethyst"
     },
     "625": {
-      "position": 151,
+      "position": 141,
       "requirement": 77,
       "name": "limbo but uwu ig idk"
     },
     "627": {
-      "position": 99,
+      "position": 91,
       "requirement": 76,
       "name": "Operation Evolution"
     },
-    "628": {
-      "position": 161,
-      "requirement": 100,
-      "name": "Starlight Summit"
-    },
-    "629": {
-      "position": 174,
-      "requirement": 67,
-      "name": "Swing Swing"
-    },
     "630": {
-      "position": 81,
+      "position": 74,
       "requirement": 66,
       "name": "Sevvend Clubstep"
     },
     "631": {
-      "position": 159,
+      "position": 149,
       "requirement": 100,
       "name": "VOID"
     },
-    "632": {
-      "position": 191,
-      "requirement": 100,
-      "name": "IRIS"
-    },
     "633": {
-      "position": 108,
+      "position": 99,
       "requirement": 71,
       "name": "THE JET ENGINE"
     },
@@ -552,12 +407,12 @@
       "name": "Thinking Space II"
     },
     "636": {
-      "position": 156,
+      "position": 146,
       "requirement": 100,
       "name": "Blood Echo"
     },
     "637": {
-      "position": 149,
+      "position": 139,
       "requirement": 100,
       "name": "WOBBLING MACHINE"
     },
@@ -567,97 +422,77 @@
       "name": "Flamewall"
     },
     "639": {
-      "position": 25,
+      "position": 24,
       "requirement": 73,
       "name": "Defeated Circles"
     },
     "640": {
-      "position": 55,
+      "position": 51,
       "requirement": 64,
       "name": "CONVULSION"
     },
     "641": {
-      "position": 144,
+      "position": 134,
       "requirement": 100,
       "name": "azure blast"
     },
     "642": {
-      "position": 68,
+      "position": 62,
       "requirement": 73,
       "name": "Loops of Fury"
     },
-    "644": {
-      "position": 173,
-      "requirement": 100,
-      "name": "Dark Dimension"
-    },
     "646": {
-      "position": 160,
+      "position": 150,
       "requirement": 100,
       "name": "Henken"
     },
-    "647": {
-      "position": 170,
-      "requirement": 100,
-      "name": "in this"
-    },
     "648": {
-      "position": 53,
+      "position": 49,
       "requirement": 68,
       "name": "Silentlocked"
     },
     "649": {
-      "position": 23,
+      "position": 22,
       "requirement": 66,
       "name": "Subsuming Vortex"
     },
     "650": {
-      "position": 96,
+      "position": 88,
       "requirement": 73,
       "name": "Wavterminal"
     },
     "651": {
-      "position": 152,
+      "position": 142,
       "requirement": 100,
       "name": "Graceful"
     },
     "652": {
-      "position": 45,
+      "position": 43,
       "requirement": 78,
       "name": "CHIL"
     },
     "653": {
-      "position": 98,
+      "position": 90,
       "requirement": 70,
       "name": "Infinite Chaos"
     },
     "654": {
-      "position": 158,
+      "position": 148,
       "requirement": 100,
       "name": "DISCONNECT"
     },
     "655": {
-      "position": 50,
+      "position": 47,
       "requirement": 66,
       "name": "The Salt Factory"
     },
-    "656": {
-      "position": 166,
-      "requirement": 100,
-      "name": "chrome hearts"
-    },
-    "657": {
-      "position": 179,
-      "requirement": 100,
-      "name": "Time Lapse"
-    },
     "658": {
-      "position": 56,
+      "position": 52,
       "requirement": 68,
       "name": "Snowbound"
     },
     "659": {
-      "position": 101,
+      "position": 93,
       "requirement": 77,
       "name": "Decks Dark"
     },
@@ -666,43 +501,33 @@
       "requirement": 60,
       "name": "Quanteuse processing"
     },
-    "661": {
-      "position": 183,
-      "requirement": 100,
-      "name": "Goober Rage Stage"
-    },
     "662": {
-      "position": 129,
+      "position": 119,
       "requirement": 100,
       "name": "The Wonder of You"
     },
     "663": {
-      "position": 60,
+      "position": 54,
       "requirement": 90,
       "name": "Through The Gates"
     },
     "664": {
-      "position": 153,
+      "position": 143,
       "requirement": 100,
       "name": "paranoia"
     },
     "665": {
-      "position": 139,
+      "position": 129,
       "requirement": 100,
       "name": "Levigo"
     },
-    "666": {
-      "position": 192,
-      "requirement": 100,
-      "name": "Galeforce"
-    },
     "667": {
-      "position": 65,
+      "position": 59,
       "requirement": 57,
       "name": "Voltage"
     },
     "668": {
-      "position": 35,
+      "position": 34,
       "requirement": 74,
       "name": "Based After Based"
     },
@@ -712,7 +537,7 @@
       "name": "Ashley Wave Trials"
     },
     "670": {
-      "position": 88,
+      "position": 80,
       "requirement": 60,
       "name": "The Catacombs"
     },
@@ -722,112 +547,92 @@
       "name": "ORBIT"
     },
     "672": {
-      "position": 95,
+      "position": 87,
       "requirement": 82,
       "name": "CHROMACAVE"
     },
     "673": {
-      "position": 66,
+      "position": 60,
       "requirement": 72,
       "name": "NOMAD"
     },
     "674": {
-      "position": 79,
+      "position": 72,
       "requirement": 78,
       "name": "Stellar Night"
     },
     "675": {
-      "position": 118,
+      "position": 109,
       "requirement": 100,
       "name": "Diabolic ClubStep"
     },
     "676": {
-      "position": 115,
+      "position": 106,
       "requirement": 77,
       "name": "TrakineS"
     },
     "677": {
-      "position": 46,
+      "position": 44,
       "requirement": 62,
       "name": "zorin"
     },
     "678": {
-      "position": 130,
+      "position": 120,
       "requirement": 100,
       "name": "Dualist"
     },
     "679": {
-      "position": 43,
+      "position": 41,
       "requirement": 73,
       "name": "BEING HOME"
     },
     "680": {
-      "position": 20,
+      "position": 19,
       "requirement": 80,
       "name": "Penumbral"
     },
     "681": {
-      "position": 69,
+      "position": 63,
       "requirement": 66,
       "name": "Fracture"
     },
     "682": {
-      "position": 120,
+      "position": 111,
       "requirement": 100,
       "name": "DreamStep"
     },
     "683": {
-      "position": 71,
+      "position": 65,
       "requirement": 63,
       "name": "Calibrate"
     },
     "684": {
-      "position": 78,
+      "position": 71,
       "requirement": 76,
       "name": "BRITNEY NO SCLEARS"
     },
-    "685": {
-      "position": 172,
-      "requirement": 100,
-      "name": "ROCKBOTTOM"
-    },
-    "686": {
-      "position": 168,
-      "requirement": 100,
-      "name": "Silent Lunch"
-    },
     "687": {
-      "position": 110,
+      "position": 101,
       "requirement": 100,
       "name": "Trickshot"
     },
-    "688": {
-      "position": 187,
-      "requirement": 100,
-      "name": "BLITZ"
-    },
-    "689": {
-      "position": 185,
-      "requirement": 100,
-      "name": "GLUNGUS ADVENTURES"
-    },
     "690": {
-      "position": 116,
+      "position": 107,
       "requirement": 100,
       "name": "Between Duality"
     },
     "695": {
-      "position": 51,
+      "position": 48,
       "requirement": 83,
       "name": "Master of Puppets"
     },
     "696": {
-      "position": 22,
+      "position": 21,
       "requirement": 69,
       "name": "KILLSTEALER"
     },
     "697": {
-      "position": 38,
+      "position": 37,
       "requirement": 85,
       "name": "Maniacal Chains"
     },
@@ -837,7 +642,7 @@
       "name": "Society"
     },
     "699": {
-      "position": 83,
+      "position": 76,
       "requirement": 67,
       "name": "Losing Your Mind"
     },
@@ -847,7 +652,7 @@
       "name": "The Bloop"
     },
     "701": {
-      "position": 112,
+      "position": 103,
       "requirement": 100,
       "name": "Doppler"
     },
@@ -857,42 +662,42 @@
       "name": "Green Bullet"
     },
     "703": {
-      "position": 147,
+      "position": 137,
       "requirement": 100,
       "name": "idontknowwhatthisis"
     },
     "704": {
-      "position": 19,
+      "position": 18,
       "requirement": 37,
       "name": "Ultra Paracosm"
     },
     "705": {
-      "position": 67,
+      "position": 61,
       "requirement": 64,
       "name": "NervHell"
     },
     "706": {
-      "position": 34,
+      "position": 33,
       "requirement": 72,
       "name": "Sacrifice"
     },
     "707": {
-      "position": 62,
+      "position": 56,
       "requirement": 71,
       "name": "Pinnacle of Life"
     },
     "708": {
-      "position": 47,
+      "position": 45,
       "requirement": 71,
       "name": "Prismline"
     },
     "709": {
-      "position": 36,
+      "position": 35,
       "requirement": 75,
       "name": "cognitohazard"
     },
     "710": {
-      "position": 131,
+      "position": 121,
       "requirement": 100,
       "name": "Sanctity"
     },
@@ -902,34 +707,29 @@
       "name": "Antarctic Lights"
     },
     "712": {
-      "position": 90,
+      "position": 82,
       "requirement": 57,
       "name": "Make Paul Dance"
     },
     "713": {
-      "position": 85,
+      "position": 77,
       "requirement": 61,
       "name": "Haunted Ship"
     },
     "714": {
-      "position": 143,
+      "position": 133,
       "requirement": 100,
       "name": "SPIRIT OVERCLOCK"
     },
     "715": {
-      "position": 27,
+      "position": 26,
       "requirement": 66,
       "name": "FOREST OF SPIKES"
     },
     "716": {
-      "position": 141,
+      "position": 131,
       "requirement": 100,
       "name": "Heavenly Sakupen"
-    },
-    "723": {
-      "position": 163,
-      "requirement": 100,
-      "name": "adjunto adnominal"
     },
     "728": {
       "position": 1,
@@ -937,7 +737,7 @@
       "name": "GRIEF"
     },
     "729": {
-      "position": 146,
+      "position": 136,
       "requirement": 100,
       "name": "Breakcore"
     },
@@ -946,58 +746,8 @@
       "requirement": 73,
       "name": "Artemis 13"
     },
-    "731": {
-      "position": 48,
-      "requirement": 71,
-      "name": "BASSLINE JUNKIE"
-    },
-    "732": {
-      "position": 106,
-      "requirement": 100,
-      "name": "Marks"
-    },
-    "733": {
-      "position": 39,
-      "requirement": 74,
-      "name": "Thinking Space II"
-    },
-    "734": {
-      "position": 84,
-      "requirement": 100,
-      "name": "ETERNALtheory"
-    },
-    "735": {
-      "position": 75,
-      "requirement": 77,
-      "name": "Blooming Blossoms"
-    },
-    "736": {
-      "position": 17,
-      "requirement": 60,
-      "name": "Old Orochi"
-    },
-    "737": {
-      "position": 52,
-      "requirement": 66,
-      "name": "Lost in Time 2"
-    },
-    "738": {
-      "position": 127,
-      "requirement": 100,
-      "name": "blight"
-    },
-    "739": {
-      "position": 57,
-      "requirement": 76,
-      "name": "Shadow Of The Past"
-    },
-    "740": {
-      "position": 58,
-      "requirement": 64,
-      "name": "ace"
-    },
     "741": {
-      "position": 64,
+      "position": 58,
       "requirement": 66,
       "name": "BLAZEIT"
     }
@@ -9327,6 +9077,66 @@
     "144988390:weyolll3"
   ],
   "seenAredlChangelogKeys": [
+    "2026-10-20T11:45:47.102683Z:981217ce-69a0-44ce-9776-f6306ef1ef64:Raised",
+    "2026-10-21T20:32:38.688752Z:566541dc-d103-4e51-b378-a867817635a4:Placed",
+    "2026-10-22T06:35:12.326856Z:97972dc3-f907-47be-8024-94bd0360d22f:Raised",
+    "2026-10-22T10:08:47.222285Z:ac87af03-9cb1-414f-b617-0d634a47a463:Raised",
+    "2026-10-22T11:31:52.778241Z:ddb6db07-660d-4d32-8f67-e7c2bb75c5c4:Raised",
+    "2026-10-22T17:02:49.465175Z:26b64bfe-d59a-4cd4-96f5-0510ccae283a:Lowered",
+    "2026-10-22T18:01:03.747395Z:e6bf6a67-f3a6-4c44-914a-707fb2b0c835:Lowered",
+    "2026-10-22T19:38:35.875679Z:5a7db296-3286-4056-8ed6-5dd92658125f:0",
+    "2026-10-22T19:41:44.424762Z:47f5b7c6-1511-4d26-92c3-feba98f45e33:0",
+    "2026-10-22T19:45:46.596628Z:70607b1e-a97c-444a-b598-dbeb9bb2f30b:0",
+    "2026-10-22T19:49:06.372216Z:1da7e494-960b-4d17-ace1-e87540357928:0",
+    "2026-10-22T19:52:28.272551Z:bc9d4984-6fa4-4f61-9bf8-10b57b198ef9:0",
+    "2026-10-23T00:45:33.960888Z:6aab7439-0ccf-4fa6-ae1e-c61b599004b7:Raised",
+    "2026-10-23T02:04:15.162190Z:2ed92495-45d0-4825-91ad-f333ab5eb72b:Lowered",
+    "2026-10-23T15:45:42.413514Z:1221db41-c878-4786-98df-10193205d54e:Lowered",
+    "2026-10-24T13:18:38.762726Z:414afb01-7ce8-4237-ba08-5da2ed4ee3ef:Raised",
+    "2026-10-24T15:20:12.650653Z:323af988-b222-4575-9ed5-3cf2d5ed82cd:0",
+    "2026-10-24T16:41:32.825835Z:53b3bbf4-38d0-465f-bdfc-38710e8840a5:Lowered",
+    "2026-10-25T09:07:03.986635Z:78d2148c-d0eb-468e-979a-aee250514f02:MovedToLegacy",
+    "2026-10-25T12:56:38.191369Z:56b8c520-2821-4701-9df6-fbe94d44c15b:Placed",
+    "2026-10-25T12:57:35.743498Z:23ca973e-c3b4-48f1-8c5b-a0d69f351b90:Placed",
+    "2026-10-25T12:59:00.976455Z:9c08a6f9-ae57-44e5-8be4-a9d77bdfa418:Placed",
+    "2026-10-25T12:59:51.077743Z:e8d9ef97-26c0-4d09-8c24-ed71cf6b66e3:Placed",
+    "2026-10-25T13:01:02.994819Z:4ce451c0-9d56-4d33-8084-df6ad2c57c73:Placed",
+    "2026-10-25T13:03:01.960813Z:92953762-b465-42ad-b76b-88cfe922b6be:Placed",
+    "2026-10-25T14:16:05.416418Z:58c5052c-97e6-4b00-bc84-37c16908deb2:Raised",
+    "2026-10-25T14:16:29.342309Z:0ba3a2fa-560b-4f53-ac19-ba00447c65dd:Raised",
+    "2026-10-26T15:02:29.715196Z:68f7dca1-2735-431b-84f5-5fe940e27da8:Raised",
+    "2026-10-26T17:51:39.413295Z:211fba78-2db4-4220-8dbe-c9bd5fa830c0:Raised",
+    "2026-10-26T18:05:55.413817Z:ecf3550e-fd6a-4dd0-8756-c3777877dc7c:Raised",
+    "2026-10-27T00:31:59.133988Z:c8971515-f6fb-42cf-8d73-af3761643f3d:Raised",
+    "2026-10-27T00:53:08.020364Z:031cc75c-7efb-47ab-acd1-68ca9d189c03:Placed",
+    "2026-10-27T01:43:10.778685Z:c40aeba7-841e-47e8-8c05-9e02dddedb83:Raised",
+    "2026-10-28T17:24:26.052514Z:2f954949-01cb-4946-be55-a8cb76b04794:Raised",
+    "2026-10-28T22:49:51.962406Z:1a846f78-002e-4ae2-a3da-0f14f1c1f3c6:Raised",
+    "2026-10-29T20:43:51.055462Z:aa76f56a-e2c2-4aab-af9e-ea212a8efc14:Lowered",
+    "2026-10-30T02:29:52.058306Z:a3826760-d23f-4363-ae89-9f294794f16f:Lowered",
+    "2026-10-30T04:46:34.181807Z:cced5037-1c78-4ea0-a65c-40af4671497b:Placed",
+    "2026-10-30T13:03:30.342547Z:72bf2c18-1299-408b-bca2-3da986956632:Lowered",
+    "2026-10-31T04:54:32.208233Z:5889a9e8-0220-4f6e-805d-3cf660da8c11:0",
+    "2026-10-31T05:26:21.720448Z:46351fca-4eee-46c3-a8ac-c9f3d930e89d:Lowered",
+    "2026-10-31T06:09:01.924877Z:007000f3-c6b4-440a-a4b3-af7e86e132e9:Swapped",
+    "2026-10-31T16:43:52.617591Z:1da7e494-960b-4d17-ace1-e87540357928:Removed",
+    "2026-10-31T21:33:44.263526Z:9ee5a3ae-9879-45f7-a6c2-6bda86fa6d2f:Lowered",
+    "2026-11-01T02:40:44.752988Z:5a6ff981-b68a-4a1c-97ba-314d0b231fe9:Raised",
+    "2026-11-01T02:52:26.354452Z:7081880b-fe8c-4d3f-8557-a895b7aee521:Raised",
+    "2026-11-02T02:37:51.311135Z:3eb14f3a-0e50-43f9-bc10-a3435cfcad02:0",
+    "2026-11-02T04:49:17.790913Z:79a36bdf-e70d-475e-9759-f2707fbac2d3:Raised",
+    "2026-11-02T05:46:44.218250Z:aa9a818c-983d-4f3c-b859-e474ceea1b7f:Lowered",
+    "2026-11-02T19:28:28.002696Z:ccfefc6c-63e4-4f77-83d1-0e3b6a5103d7:Raised",
+    "2026-11-02T20:50:34.721793Z:13574f6c-cae1-487e-9d01-86769e5830c8:Raised",
+    "2026-11-03T02:25:20.189668Z:b89f3cfe-b00e-45e1-b121-5c8b2b9576d8:Raised",
+    "2026-11-03T05:05:47.219266Z:6e43b247-2d5a-4939-aafa-e7e276536af3:0",
+    "2026-11-03T21:42:04.666260Z:9ef4571c-8348-409d-a538-39f073b8c54a:0",
+    "2026-11-03T21:48:35.411898Z:d17ea2ca-51ab-466f-a3d1-419a29927af5:0",
+    "2026-11-03T21:53:01.789027Z:c7abd529-2627-4ec9-8059-b5c56ef44799:0",
+    "2026-11-03T21:58:16.944236Z:6a7d287e-2c3c-4cf7-8d14-ccec5022d138:0",
+    "2026-11-05T01:24:59.836751Z:20a1f03a-87b3-42cd-8856-5a7ef79daf25:Placed",
+    "2026-11-05T01:25:37.753271Z:12d93f10-6dda-43f2-90db-2a8862cb0a82:Placed",
+    "2026-11-05T01:26:04.897204Z:6df7212b-87c2-46f8-968d-982382ce3bef:Placed",
     "2026-11-05T01:26:36.345609Z:d1fd0b90-9a66-4f23-b57d-256f24c047ee:Placed",
     "2026-11-05T06:40:04.147949Z:21fe55c1-aae2-4009-84db-26339e39fc38:0",
     "2026-11-05T13:41:46.088119Z:4cfb07b5-3e6e-4d7e-9833-d7f013a85064:Raised",
@@ -9926,6 +9736,846 @@
       "levelId": 97303030,
       "newPosition": 182,
       "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-11-05T01:26:04.897204Z:6df7212b-87c2-46f8-968d-982382ce3bef:Placed",
+      "type": "demon_placed",
+      "source": "AREDL",
+      "createdAt": "2026-11-05T01:26:04.897204Z",
+      "title": "DIENERS CANVAS placed on AREDL",
+      "summary": "Entered the leaderboard at #202",
+      "levelName": "DIENERS CANVAS",
+      "levelId": 121553971,
+      "newPosition": 202,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-11-05T01:25:37.753271Z:12d93f10-6dda-43f2-90db-2a8862cb0a82:Placed",
+      "type": "demon_placed",
+      "source": "AREDL",
+      "createdAt": "2026-11-05T01:25:37.753271Z",
+      "title": "wind placed on AREDL",
+      "summary": "Entered the leaderboard at #237",
+      "levelName": "wind",
+      "levelId": 80259838,
+      "newPosition": 237,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-11-05T01:24:59.836751Z:20a1f03a-87b3-42cd-8856-5a7ef79daf25:Placed",
+      "type": "demon_placed",
+      "source": "AREDL",
+      "createdAt": "2026-11-05T01:24:59.836751Z",
+      "title": "Jump Down placed on AREDL",
+      "summary": "Entered the leaderboard at #474",
+      "levelName": "Jump Down",
+      "levelId": 138833445,
+      "newPosition": 474,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-11-03T21:58:16.944236Z:6a7d287e-2c3c-4cf7-8d14-ccec5022d138:0",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-11-03T21:58:16.944236Z",
+      "title": "BloodBat (0)",
+      "summary": "Status changed (0)",
+      "levelName": "BloodBat",
+      "levelId": 149528359,
+      "newPosition": null,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-11-03T21:53:01.789027Z:c7abd529-2627-4ec9-8059-b5c56ef44799:0",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-11-03T21:53:01.789027Z",
+      "title": "MONHEIM (0)",
+      "summary": "Status changed (0)",
+      "levelName": "MONHEIM",
+      "levelId": 143564503,
+      "newPosition": null,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-11-03T21:48:35.411898Z:d17ea2ca-51ab-466f-a3d1-419a29927af5:0",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-11-03T21:48:35.411898Z",
+      "title": "Havoc (0)",
+      "summary": "Status changed (0)",
+      "levelName": "Havoc",
+      "levelId": 147841532,
+      "newPosition": null,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-11-03T21:42:04.666260Z:9ef4571c-8348-409d-a538-39f073b8c54a:0",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-11-03T21:42:04.666260Z",
+      "title": "Mariana (0)",
+      "summary": "Status changed (0)",
+      "levelName": "Mariana",
+      "levelId": 144448963,
+      "newPosition": null,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-11-03T05:05:47.219266Z:6e43b247-2d5a-4939-aafa-e7e276536af3:0",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-11-03T05:05:47.219266Z",
+      "title": "COMA (0)",
+      "summary": "Status changed (0)",
+      "levelName": "COMA",
+      "levelId": 134197080,
+      "newPosition": null,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-11-03T02:25:20.189668Z:b89f3cfe-b00e-45e1-b121-5c8b2b9576d8:Raised",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-11-03T02:25:20.189668Z",
+      "title": "Northern Essence rank updated",
+      "summary": "Moved up #1314 → #1210",
+      "levelName": "Northern Essence",
+      "levelId": 116415188,
+      "newPosition": 1210,
+      "oldPosition": 1314,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-11-02T20:50:34.721793Z:13574f6c-cae1-487e-9d01-86769e5830c8:Raised",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-11-02T20:50:34.721793Z",
+      "title": "Lovestruck rank updated",
+      "summary": "Moved up #668 → #603",
+      "levelName": "Lovestruck",
+      "levelId": 107764640,
+      "newPosition": 603,
+      "oldPosition": 668,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-11-02T19:28:28.002696Z:ccfefc6c-63e4-4f77-83d1-0e3b6a5103d7:Raised",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-11-02T19:28:28.002696Z",
+      "title": "Porridge Factory rank updated",
+      "summary": "Moved up #247 → #230",
+      "levelName": "Porridge Factory",
+      "levelId": 127975974,
+      "newPosition": 230,
+      "oldPosition": 247,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-11-02T05:46:44.218250Z:aa9a818c-983d-4f3c-b859-e474ceea1b7f:Lowered",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-11-02T05:46:44.218250Z",
+      "title": "IMOISTAR rank updated",
+      "summary": "Moved down #558 → #577",
+      "levelName": "IMOISTAR",
+      "levelId": 108821040,
+      "newPosition": 577,
+      "oldPosition": 558,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-11-02T04:49:17.790913Z:79a36bdf-e70d-475e-9759-f2707fbac2d3:Raised",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-11-02T04:49:17.790913Z",
+      "title": "CHERRYCRUSH rank updated",
+      "summary": "Moved up #1222 → #1157",
+      "levelName": "CHERRYCRUSH",
+      "levelId": 129447575,
+      "newPosition": 1157,
+      "oldPosition": 1222,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-11-02T02:37:51.311135Z:3eb14f3a-0e50-43f9-bc10-a3435cfcad02:0",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-11-02T02:37:51.311135Z",
+      "title": "PRECISIONISKEY (0)",
+      "summary": "Status changed (0)",
+      "levelName": "PRECISIONISKEY",
+      "levelId": 144466517,
+      "newPosition": null,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-11-01T02:52:26.354452Z:7081880b-fe8c-4d3f-8557-a895b7aee521:Raised",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-11-01T02:52:26.354452Z",
+      "title": "Snowbound rank updated",
+      "summary": "Moved up #57 → #52",
+      "levelName": "Snowbound",
+      "levelId": 120289520,
+      "newPosition": 52,
+      "oldPosition": 57,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-11-01T02:40:44.752988Z:5a6ff981-b68a-4a1c-97ba-314d0b231fe9:Raised",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-11-01T02:40:44.752988Z",
+      "title": "ConClusion rank updated",
+      "summary": "Moved up #190 → #180",
+      "levelName": "ConClusion",
+      "levelId": 96471171,
+      "newPosition": 180,
+      "oldPosition": 190,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-31T21:33:44.263526Z:9ee5a3ae-9879-45f7-a6c2-6bda86fa6d2f:Lowered",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-31T21:33:44.263526Z",
+      "title": "Edelweiss rank updated",
+      "summary": "Moved down #534 → #555",
+      "levelName": "Edelweiss",
+      "levelId": 85393418,
+      "newPosition": 555,
+      "oldPosition": 534,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-31T16:43:52.617591Z:1da7e494-960b-4d17-ace1-e87540357928:Removed",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-31T16:43:52.617591Z",
+      "title": "Autumn Season (Removed)",
+      "summary": "Status changed (Removed)",
+      "levelName": "Autumn Season",
+      "levelId": 147329136,
+      "newPosition": null,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-31T06:09:01.924877Z:007000f3-c6b4-440a-a4b3-af7e86e132e9:Swapped",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-31T06:09:01.924877Z",
+      "title": "Firework (Swapped)",
+      "summary": "Status changed (Swapped)",
+      "levelName": "Firework",
+      "levelId": 75206202,
+      "newPosition": null,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-31T05:26:21.720448Z:46351fca-4eee-46c3-a8ac-c9f3d930e89d:Lowered",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-31T05:26:21.720448Z",
+      "title": "Belladonna rank updated",
+      "summary": "Moved down #81 → #83",
+      "levelName": "Belladonna",
+      "levelId": 94969889,
+      "newPosition": 83,
+      "oldPosition": 81,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-31T04:54:32.208233Z:5889a9e8-0220-4f6e-805d-3cf660da8c11:0",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-31T04:54:32.208233Z",
+      "title": "Destroy (0)",
+      "summary": "Status changed (0)",
+      "levelName": "Destroy",
+      "levelId": 143566199,
+      "newPosition": null,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-30T13:03:30.342547Z:72bf2c18-1299-408b-bca2-3da986956632:Lowered",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-30T13:03:30.342547Z",
+      "title": "KOSETSU rank updated",
+      "summary": "Moved down #51 → #54",
+      "levelName": "KOSETSU",
+      "levelId": 109439644,
+      "newPosition": 54,
+      "oldPosition": 51,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-30T04:46:34.181807Z:cced5037-1c78-4ea0-a65c-40af4671497b:Placed",
+      "type": "demon_placed",
+      "source": "AREDL",
+      "createdAt": "2026-10-30T04:46:34.181807Z",
+      "title": "MANIC placed on AREDL",
+      "summary": "Entered the leaderboard at #729",
+      "levelName": "MANIC",
+      "levelId": 127776418,
+      "newPosition": 729,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-30T02:29:52.058306Z:a3826760-d23f-4363-ae89-9f294794f16f:Lowered",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-30T02:29:52.058306Z",
+      "title": "The Ultimate Phase rank updated",
+      "summary": "Moved down #1231 → #1255",
+      "levelName": "The Ultimate Phase",
+      "levelId": 7174110,
+      "newPosition": 1255,
+      "oldPosition": 1231,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-29T20:43:51.055462Z:aa76f56a-e2c2-4aab-af9e-ea212a8efc14:Lowered",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-29T20:43:51.055462Z",
+      "title": "no jokes rank updated",
+      "summary": "Moved down #248 → #262",
+      "levelName": "no jokes",
+      "levelId": 84507862,
+      "newPosition": 262,
+      "oldPosition": 248,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-28T22:49:51.962406Z:1a846f78-002e-4ae2-a3da-0f14f1c1f3c6:Raised",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-28T22:49:51.962406Z",
+      "title": "Khorne rank updated",
+      "summary": "Moved up #715 → #664",
+      "levelName": "Khorne",
+      "levelId": 58578389,
+      "newPosition": 664,
+      "oldPosition": 715,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-28T17:24:26.052514Z:2f954949-01cb-4946-be55-a8cb76b04794:Raised",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-28T17:24:26.052514Z",
+      "title": "azure blast rank updated",
+      "summary": "Moved up #151 → #133",
+      "levelName": "azure blast",
+      "levelId": 120060187,
+      "newPosition": 133,
+      "oldPosition": 151,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-27T01:43:10.778685Z:c40aeba7-841e-47e8-8c05-9e02dddedb83:Raised",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-27T01:43:10.778685Z",
+      "title": "Loops of Fury rank updated",
+      "summary": "Moved up #69 → #59",
+      "levelName": "Loops of Fury",
+      "levelId": 126571887,
+      "newPosition": 59,
+      "oldPosition": 69,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-27T00:53:08.020364Z:031cc75c-7efb-47ab-acd1-68ca9d189c03:Placed",
+      "type": "demon_placed",
+      "source": "AREDL",
+      "createdAt": "2026-10-27T00:53:08.020364Z",
+      "title": "Withered Star placed on AREDL",
+      "summary": "Entered the leaderboard at #624",
+      "levelName": "Withered Star",
+      "levelId": 116507747,
+      "newPosition": 624,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-27T00:31:59.133988Z:c8971515-f6fb-42cf-8d73-af3761643f3d:Raised",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-27T00:31:59.133988Z",
+      "title": "Renevant rank updated",
+      "summary": "Moved up #189 → #186",
+      "levelName": "Renevant",
+      "levelId": 58161496,
+      "newPosition": 186,
+      "oldPosition": 189,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-26T18:05:55.413817Z:ecf3550e-fd6a-4dd0-8756-c3777877dc7c:Raised",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-26T18:05:55.413817Z",
+      "title": "2 0 rank updated",
+      "summary": "Moved up #1563 → #1542",
+      "levelName": "2 0",
+      "levelId": 7676557,
+      "newPosition": 1542,
+      "oldPosition": 1563,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-26T17:51:39.413295Z:211fba78-2db4-4220-8dbe-c9bd5fa830c0:Raised",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-26T17:51:39.413295Z",
+      "title": "Stressed Out rank updated",
+      "summary": "Moved up #1027 → #914",
+      "levelName": "Stressed Out",
+      "levelId": 118078448,
+      "newPosition": 914,
+      "oldPosition": 1027,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-26T15:02:29.715196Z:68f7dca1-2735-431b-84f5-5fe940e27da8:Raised",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-26T15:02:29.715196Z",
+      "title": "Fracture rank updated",
+      "summary": "Moved up #86 → #59",
+      "levelName": "Fracture",
+      "levelId": 99703915,
+      "newPosition": 59,
+      "oldPosition": 86,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-25T14:16:29.342309Z:0ba3a2fa-560b-4f53-ac19-ba00447c65dd:Raised",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-25T14:16:29.342309Z",
+      "title": "Dusker Processing rank updated",
+      "summary": "Moved up #701 → #694",
+      "levelName": "Dusker Processing",
+      "levelId": 91509581,
+      "newPosition": 694,
+      "oldPosition": 701,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-25T14:16:05.416418Z:58c5052c-97e6-4b00-bc84-37c16908deb2:Raised",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-25T14:16:05.416418Z",
+      "title": "Duplication rank updated",
+      "summary": "Moved up #1571 → #1364",
+      "levelName": "Duplication",
+      "levelId": 88577065,
+      "newPosition": 1364,
+      "oldPosition": 1571,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-25T13:03:01.960813Z:92953762-b465-42ad-b76b-88cfe922b6be:Placed",
+      "type": "demon_placed",
+      "source": "AREDL",
+      "createdAt": "2026-10-25T13:03:01.960813Z",
+      "title": "ULTRA dimension placed on AREDL",
+      "summary": "Entered the leaderboard at #227",
+      "levelName": "ULTRA dimension",
+      "levelId": 103919849,
+      "newPosition": 227,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-25T13:01:02.994819Z:4ce451c0-9d56-4d33-8084-df6ad2c57c73:Placed",
+      "type": "demon_placed",
+      "source": "AREDL",
+      "createdAt": "2026-10-25T13:01:02.994819Z",
+      "title": "PHONY placed on AREDL",
+      "summary": "Entered the leaderboard at #307",
+      "levelName": "PHONY",
+      "levelId": 129027405,
+      "newPosition": 307,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-25T12:59:51.077743Z:e8d9ef97-26c0-4d09-8c24-ed71cf6b66e3:Placed",
+      "type": "demon_placed",
+      "source": "AREDL",
+      "createdAt": "2026-10-25T12:59:51.077743Z",
+      "title": "bell placed on AREDL",
+      "summary": "Entered the leaderboard at #486",
+      "levelName": "bell",
+      "levelId": 142398277,
+      "newPosition": 486,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-25T12:59:00.976455Z:9c08a6f9-ae57-44e5-8be4-a9d77bdfa418:Placed",
+      "type": "demon_placed",
+      "source": "AREDL",
+      "createdAt": "2026-10-25T12:59:00.976455Z",
+      "title": "MACHINEGUN placed on AREDL",
+      "summary": "Entered the leaderboard at #579",
+      "levelName": "MACHINEGUN",
+      "levelId": 150445388,
+      "newPosition": 579,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-25T12:57:35.743498Z:23ca973e-c3b4-48f1-8c5b-a0d69f351b90:Placed",
+      "type": "demon_placed",
+      "source": "AREDL",
+      "createdAt": "2026-10-25T12:57:35.743498Z",
+      "title": "XDAY placed on AREDL",
+      "summary": "Entered the leaderboard at #675",
+      "levelName": "XDAY",
+      "levelId": 125504051,
+      "newPosition": 675,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-25T12:56:38.191369Z:56b8c520-2821-4701-9df6-fbe94d44c15b:Placed",
+      "type": "demon_placed",
+      "source": "AREDL",
+      "createdAt": "2026-10-25T12:56:38.191369Z",
+      "title": "i want ya placed on AREDL",
+      "summary": "Entered the leaderboard at #1569",
+      "levelName": "i want ya",
+      "levelId": 142286828,
+      "newPosition": 1569,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-25T09:07:03.986635Z:78d2148c-d0eb-468e-979a-aee250514f02:MovedToLegacy",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-25T09:07:03.986635Z",
+      "title": "ANNIHILATED (MovedToLegacy)",
+      "summary": "Updated at #1604",
+      "levelName": "ANNIHILATED",
+      "levelId": 115370944,
+      "newPosition": 1604,
+      "oldPosition": 1594,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-24T16:41:32.825835Z:53b3bbf4-38d0-465f-bdfc-38710e8840a5:Lowered",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-24T16:41:32.825835Z",
+      "title": "Xronier rank updated",
+      "summary": "Moved down #501 → #548",
+      "levelName": "Xronier",
+      "levelId": 88913586,
+      "newPosition": 548,
+      "oldPosition": 501,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-24T15:20:12.650653Z:323af988-b222-4575-9ed5-3cf2d5ed82cd:0",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-24T15:20:12.650653Z",
+      "title": "Neon Thrills (0)",
+      "summary": "Status changed (0)",
+      "levelName": "Neon Thrills",
+      "levelId": 150109335,
+      "newPosition": null,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-24T13:18:38.762726Z:414afb01-7ce8-4237-ba08-5da2ed4ee3ef:Raised",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-24T13:18:38.762726Z",
+      "title": "Between Duality rank updated",
+      "summary": "Moved up #115 → #106",
+      "levelName": "Between Duality",
+      "levelId": 137757402,
+      "newPosition": 106,
+      "oldPosition": 115,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-23T15:45:42.413514Z:1221db41-c878-4786-98df-10193205d54e:Lowered",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-23T15:45:42.413514Z",
+      "title": "adjunto adnominal rank updated",
+      "summary": "Moved down #137 → #157",
+      "levelName": "adjunto adnominal",
+      "levelId": 137400971,
+      "newPosition": 157,
+      "oldPosition": 137,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-23T02:04:15.162190Z:2ed92495-45d0-4825-91ad-f333ab5eb72b:Lowered",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-23T02:04:15.162190Z",
+      "title": "Dump rank updated",
+      "summary": "Moved down #309 → #311",
+      "levelName": "Dump",
+      "levelId": 89513590,
+      "newPosition": 311,
+      "oldPosition": 309,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-23T00:45:33.960888Z:6aab7439-0ccf-4fa6-ae1e-c61b599004b7:Raised",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-23T00:45:33.960888Z",
+      "title": "SHINE rank updated",
+      "summary": "Moved up #1366 → #1295",
+      "levelName": "SHINE",
+      "levelId": 116735521,
+      "newPosition": 1295,
+      "oldPosition": 1366,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-22T19:52:28.272551Z:bc9d4984-6fa4-4f61-9bf8-10b57b198ef9:0",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-22T19:52:28.272551Z",
+      "title": "Friend Zone (0)",
+      "summary": "Status changed (0)",
+      "levelName": "Friend Zone",
+      "levelId": 93188625,
+      "newPosition": null,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-22T19:49:06.372216Z:1da7e494-960b-4d17-ace1-e87540357928:0",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-22T19:49:06.372216Z",
+      "title": "Autumn Season (0)",
+      "summary": "Status changed (0)",
+      "levelName": "Autumn Season",
+      "levelId": 147329136,
+      "newPosition": null,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-22T19:45:46.596628Z:70607b1e-a97c-444a-b598-dbeb9bb2f30b:0",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-22T19:45:46.596628Z",
+      "title": "frame reframe (0)",
+      "summary": "Status changed (0)",
+      "levelName": "frame reframe",
+      "levelId": 148183384,
+      "newPosition": null,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-22T19:41:44.424762Z:47f5b7c6-1511-4d26-92c3-feba98f45e33:0",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-22T19:41:44.424762Z",
+      "title": "Arcana (0)",
+      "summary": "Status changed (0)",
+      "levelName": "Arcana",
+      "levelId": 148909133,
+      "newPosition": null,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-22T19:38:35.875679Z:5a7db296-3286-4056-8ed6-5dd92658125f:0",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-22T19:38:35.875679Z",
+      "title": "METROPOLIS (0)",
+      "summary": "Status changed (0)",
+      "levelName": "METROPOLIS",
+      "levelId": 144560194,
+      "newPosition": null,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-22T18:01:03.747395Z:e6bf6a67-f3a6-4c44-914a-707fb2b0c835:Lowered",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-22T18:01:03.747395Z",
+      "title": "CHROMA II rank updated",
+      "summary": "Moved down #617 → #652",
+      "levelName": "CHROMA II",
+      "levelId": 70187443,
+      "newPosition": 652,
+      "oldPosition": 617,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-22T17:02:49.465175Z:26b64bfe-d59a-4cd4-96f5-0510ccae283a:Lowered",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-22T17:02:49.465175Z",
+      "title": "Worse Trip rank updated",
+      "summary": "Moved down #646 → #677",
+      "levelName": "Worse Trip",
+      "levelId": 78248443,
+      "newPosition": 677,
+      "oldPosition": 646,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-22T11:31:52.778241Z:ddb6db07-660d-4d32-8f67-e7c2bb75c5c4:Raised",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-22T11:31:52.778241Z",
+      "title": "RASH rank updated",
+      "summary": "Moved up #715 → #690",
+      "levelName": "RASH",
+      "levelId": 69507105,
+      "newPosition": 690,
+      "oldPosition": 715,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-22T10:08:47.222285Z:ac87af03-9cb1-414f-b617-0d634a47a463:Raised",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-22T10:08:47.222285Z",
+      "title": "Death Sentence rank updated",
+      "summary": "Moved up #1154 → #1094",
+      "levelName": "Death Sentence",
+      "levelId": 109855055,
+      "newPosition": 1094,
+      "oldPosition": 1154,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-22T06:35:12.326856Z:97972dc3-f907-47be-8024-94bd0360d22f:Raised",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-22T06:35:12.326856Z",
+      "title": "Freedom08 rank updated",
+      "summary": "Moved up #433 → #425",
+      "levelName": "Freedom08",
+      "levelId": 55274070,
+      "newPosition": 425,
+      "oldPosition": 433,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-21T20:32:38.688752Z:566541dc-d103-4e51-b378-a867817635a4:Placed",
+      "type": "demon_placed",
+      "source": "AREDL",
+      "createdAt": "2026-10-21T20:32:38.688752Z",
+      "title": "bunnies i guess placed on AREDL",
+      "summary": "Entered the leaderboard at #1545",
+      "levelName": "bunnies i guess",
+      "levelId": 147758609,
+      "newPosition": 1545,
+      "oldPosition": null,
+      "playerName": null,
+      "videoUrl": null
+    },
+    {
+      "id": "aredl-cl-2026-10-20T11:45:47.102683Z:981217ce-69a0-44ce-9776-f6306ef1ef64:Raised",
+      "type": "demon_updated",
+      "source": "AREDL",
+      "createdAt": "2026-10-20T11:45:47.102683Z",
+      "title": "Dark Odyssey rank updated",
+      "summary": "Moved up #1462 → #1453",
+      "levelName": "Dark Odyssey",
+      "levelId": 69010770,
+      "newPosition": 1453,
+      "oldPosition": 1462,
       "playerName": null,
       "videoUrl": null
     },

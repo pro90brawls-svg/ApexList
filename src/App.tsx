@@ -314,8 +314,12 @@ export default function App() {
   const handleSelectNav = (view: ActiveView) => {
     setActiveView(view);
     setMobileNavOpen(false);
+    if (view === 'top10') {
+      void fetchTop10();
+    }
     if (view === 'changelog') {
       setUnreadCount(0);
+      void fetchEvents();
     }
   };
 
@@ -331,7 +335,7 @@ export default function App() {
 
       {/* Left Sidebar Navigation */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-64 shrink-0 flex-col border-r border-white/[0.08] bg-[#0B0E15] transition-transform duration-200 lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 flex w-64 shrink-0 flex-col border-r border-white/[0.08] bg-[#0B0E15] transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 ${
           mobileNavOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -522,7 +526,7 @@ export default function App() {
               {/* 4-Column KPI Summary Strip */}
               <section className="grid grid-cols-2 divide-y divide-white/[0.06] overflow-hidden rounded-xl border border-white/[0.08] bg-[#10131C] sm:grid-cols-4 sm:divide-x sm:divide-y-0">
                 <div className="px-5 py-4">
-                  <div className="text-xs text-slate-400">Pointercrate Listed</div>
+                  <div className="text-xs text-slate-400">Pointercrate Classic</div>
                   <div className="mt-1 font-mono text-2xl font-bold text-white tabular-nums">
                     {syncStatus.pointercrateCount || '—'}
                   </div>
@@ -564,6 +568,9 @@ export default function App() {
                         type="button"
                         onClick={() => {
                           setSource(s.id);
+                          if (s.id === 'pointercrate' && tier === 'legacy') {
+                            setTier('all');
+                          }
                           setPage(1);
                         }}
                         className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
@@ -585,8 +592,8 @@ export default function App() {
                         { id: 'top10', label: 'Top 10' },
                         { id: 'main', label: 'Main #1–75' },
                         { id: 'extended', label: 'Extended #76–150' },
-                        { id: 'legacy', label: 'AREDL #151+' },
-                      ] as const
+                        ...(source === 'pointercrate' ? [] : [{ id: 'legacy', label: 'AREDL #151+' }]),
+                      ] as Array<{ id: ListTier; label: string }>
                     ).map((t) => (
                       <button
                         key={t.id}
@@ -646,15 +653,15 @@ export default function App() {
                 </div>
               ) : (
                 <div className="overflow-hidden rounded-xl border border-white/[0.08] bg-[#10131C]">
-                  <table className="w-full text-left text-sm">
+                  <table className="w-full table-fixed text-left text-sm">
                     <thead className="border-b border-white/[0.08] bg-[#131722] text-xs font-medium text-slate-400">
                       <tr>
-                        <th className="w-24 px-4 py-3">Rank</th>
-                        <th className="px-4 py-3">Level</th>
-                        <th className="hidden px-4 py-3 md:table-cell">Pointercrate</th>
-                        <th className="hidden px-4 py-3 md:table-cell">AREDL</th>
-                        <th className="hidden px-4 py-3 text-right sm:table-cell">Points / Req</th>
-                        <th className="w-20 px-4 py-3 text-right">Video</th>
+                        <th className="w-16 px-3 py-3 sm:w-24 sm:px-4">Rank</th>
+                        <th className="px-3 py-3 sm:px-4">Level</th>
+                        <th className="hidden w-28 px-4 py-3 md:table-cell">Pointercrate</th>
+                        <th className="hidden w-24 px-4 py-3 md:table-cell">AREDL</th>
+                        <th className="hidden w-32 px-4 py-3 text-right sm:table-cell">Points / Req</th>
+                        <th className="w-14 px-3 py-3 text-right sm:w-20 sm:px-4">Video</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/[0.06]">
@@ -664,8 +671,8 @@ export default function App() {
                           className="group cursor-pointer transition-colors hover:bg-white/[0.025]"
                           onClick={() => setSelectedDemonKey(demon.key)}
                         >
-                          <td className="px-4 py-3 font-mono tabular-nums">
-                            <div className="flex items-center gap-2">
+                          <td className="px-3 py-3 font-mono tabular-nums sm:px-4">
+                            <div className="flex items-center gap-1.5">
                               <span
                                 className={`text-sm font-bold ${
                                   demon.rank === 1
@@ -695,16 +702,16 @@ export default function App() {
                             </div>
                           </td>
 
-                          <td className="px-4 py-3">
-                            <div className="flex items-center gap-3.5">
+                          <td className="px-3 py-3 sm:px-4">
+                            <div className="flex min-w-0 items-center gap-3.5">
                               <DemonThumbnail
                                 src={demon.thumbnail}
                                 alt={demon.name}
                                 rank={demon.rank}
                                 className="hidden h-11 w-20 shrink-0 rounded-md sm:block"
                               />
-                              <div className="min-w-0">
-                                <div className="truncate font-display text-sm font-semibold text-white group-hover:text-rose-400 transition-colors">
+                              <div className="min-w-0 flex-1">
+                                <div className="truncate font-display text-sm font-semibold text-white transition-colors group-hover:text-rose-400">
                                   {demon.name}
                                 </div>
                                 <div className="mt-0.5 truncate text-xs text-slate-400">
@@ -716,6 +723,10 @@ export default function App() {
                                     ? `Level ID ${demon.levelId}`
                                     : 'Extreme Demon'}
                                   {demon.tags.length > 0 ? ` · ${demon.tags.slice(0, 3).join(' · ')}` : ''}
+                                </div>
+                                <div className="mt-0.5 flex items-center gap-2 font-mono text-[11px] text-slate-400 tabular-nums md:hidden">
+                                  {demon.pointercratePosition && <span>PC #{demon.pointercratePosition}</span>}
+                                  {demon.aredlPosition && <span>AREDL #{demon.aredlPosition}</span>}
                                 </div>
                               </div>
                             </div>
@@ -739,7 +750,7 @@ export default function App() {
                           </td>
 
                           <td
-                            className="px-4 py-3 text-right"
+                            className="px-3 py-3 text-right sm:px-4"
                             onClick={(e) => {
                               e.stopPropagation();
                             }}
@@ -831,7 +842,7 @@ export default function App() {
 
       {/* Live Toast Alerts */}
       {toasts.length > 0 && (
-        <div className="fixed bottom-5 right-5 z-50 flex w-full max-w-sm flex-col gap-2.5 px-4 sm:px-0">
+        <div className="fixed inset-x-4 bottom-4 z-50 flex flex-col gap-2.5 sm:inset-x-auto sm:bottom-5 sm:right-5 sm:w-full sm:max-w-sm">
           {toasts.map(({ id, event }) => (
             <div
               key={id}

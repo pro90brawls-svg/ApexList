@@ -238,8 +238,8 @@ export function DemonDetailModal({ demonKey, onClose }: DemonDetailModalProps) {
                     No public victor records have been approved for this level yet.
                   </div>
                 ) : (
-                  <div className="overflow-hidden rounded-lg border border-white/[0.08]">
-                    <table className="w-full text-left text-sm">
+                  <div className="overflow-x-auto rounded-lg border border-white/[0.08]">
+                    <table className="w-full min-w-[460px] text-left text-sm">
                       <thead className="border-b border-white/[0.08] bg-[#131722] text-xs font-medium text-slate-400">
                         <tr>
                           <th className="px-4 py-2.5">Player</th>

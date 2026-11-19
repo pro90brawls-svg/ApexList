@@ -147,11 +147,11 @@ export function Top10WatchView({ levels, loading, onSelectDemon }: Top10WatchVie
                         />
                       </button>
 
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <button
                           type="button"
                           onClick={() => onSelectDemon(demonKey)}
-                          className="truncate text-left font-display text-base font-semibold text-white hover:text-rose-400 transition-colors"
+                          className="block w-full truncate text-left font-display text-base font-semibold text-white transition-colors hover:text-rose-400"
                         >
                           {level.name}
                         </button>
@@ -166,7 +166,9 @@ export function Top10WatchView({ levels, loading, onSelectDemon }: Top10WatchVie
                     <div className="flex items-center gap-4 shrink-0">
                       <div className="text-right">
                         <div className="font-mono text-sm font-semibold text-white tabular-nums">
-                          {level.victorCount} {level.victorCount === 1 ? 'Victor' : 'Victors'}
+                          {level.victorCount > 0
+                            ? `${level.victorCount} ${level.victorCount === 1 ? 'Victor' : 'Victors'}`
+                            : 'Verifier Only'}
                         </div>
                         <div className="font-mono text-xs text-slate-400 tabular-nums">
                           {level.requirement ? `${level.requirement}% req` : '100%'}

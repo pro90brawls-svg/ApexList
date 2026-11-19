@@ -330,7 +330,7 @@ export function CalendarView({ onSelectDemon }: CalendarViewProps) {
                   return (
                     <div
                       key={`empty-${idx}`}
-                      className="min-h-[92px] border-b border-r border-white/[0.05] bg-[#0B0E15]/60 sm:min-h-[108px]"
+                      className="min-h-[64px] border-b border-r border-white/[0.05] bg-[#0B0E15]/60 sm:min-h-[108px]"
                     />
                   );
                 }
@@ -344,13 +344,13 @@ export function CalendarView({ onSelectDemon }: CalendarViewProps) {
                     key={cell.dateKey}
                     type="button"
                     onClick={() => setSelectedDay(cell.dateKey!)}
-                    className={`group flex min-h-[92px] flex-col items-stretch justify-start border-b border-r border-white/[0.06] p-1.5 text-left transition-colors sm:min-h-[108px] sm:p-2 ${
+                    className={`group flex min-h-[64px] flex-col items-stretch justify-start border-b border-r border-white/[0.06] p-1.5 text-left transition-colors sm:min-h-[108px] sm:p-2 ${
                       isSelected
                         ? 'bg-[#171D2D] ring-1 ring-inset ring-rose-500/60'
                         : 'hover:bg-white/[0.025]'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-1">
                       <span
                         className={`inline-flex h-6 min-w-6 items-center justify-center rounded px-1 font-mono text-xs font-semibold tabular-nums ${
                           isToday
@@ -369,7 +369,20 @@ export function CalendarView({ onSelectDemon }: CalendarViewProps) {
                       )}
                     </div>
 
-                    <div className="mt-1.5 space-y-1 overflow-hidden">
+                    {/* Compact dots on mobile */}
+                    {dayEvents.length > 0 && (
+                      <div className="mt-1.5 flex flex-wrap gap-1 sm:hidden">
+                        {dayEvents.slice(0, 6).map((ev) => (
+                          <span
+                            key={ev.id}
+                            className={`h-1.5 w-1.5 rounded-xs ${categoryMeta(ev.category).dotClass}`}
+                          />
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Event labels on tablet/desktop */}
+                    <div className="mt-1.5 hidden space-y-1 overflow-hidden sm:block">
                       {dayEvents.slice(0, 3).map((ev) => {
                         const meta = categoryMeta(ev.category);
                         const shortLabel =
@@ -404,7 +417,7 @@ export function CalendarView({ onSelectDemon }: CalendarViewProps) {
         </div>
 
         {/* Right Panel: Selected Day Activity Inspector */}
-        <aside className="flex flex-col overflow-hidden rounded-xl border border-white/[0.08] bg-[#10131C] lg:col-span-4">
+        <aside className="flex flex-col overflow-hidden rounded-xl border border-white/[0.08] bg-[#10131C] lg:sticky lg:top-24 lg:col-span-4 lg:max-h-[calc(100vh-8rem)]">
           <div className="border-b border-white/[0.08] bg-[#131722] px-5 py-4">
             <div className="flex items-center gap-2 text-xs text-slate-400">
               <CalendarIcon className="h-3.5 w-3.5 text-rose-400" />

@@ -51,7 +51,7 @@ export function PlayersView({ players, source, onChangeSource, loading }: Player
           Player rankings are syncing from {source === 'aredl' ? 'AREDL' : 'Pointercrate'}.
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-white/[0.08] bg-[#10131C]">
+        <div className="overflow-x-auto rounded-xl border border-white/[0.08] bg-[#10131C]">
           <table className="w-full text-left text-sm">
             <thead className="border-b border-white/[0.08] bg-[#131722] text-xs font-medium text-slate-400">
               <tr>

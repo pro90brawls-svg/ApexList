@@ -225,24 +225,37 @@ function pushEvent(event: TrackerEvent, broadcast: boolean): void {
   }
 }
 
-async function fetchJson<T>(url: string, timeoutMs = 12_000): Promise<T> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, {
-      headers: {
-        Accept: 'application/json',
-        'User-Agent': 'ApexList-DemonTracker/1.0',
-      },
-      signal: controller.signal,
-    });
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status} from ${url}`);
+async function fetchJson<T>(url: string, timeoutMs = 12_000, retries = 2): Promise<T> {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const res = await fetch(url, {
+        headers: {
+          Accept: 'application/json',
+          'User-Agent': 'ApexList-DemonTracker/1.0',
+        },
+        signal: controller.signal,
+      });
+      if ((res.status === 429 || res.status >= 500) && attempt < retries) {
+        await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
+        continue;
+      }
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status} from ${url}`);
+      }
+      return (await res.json()) as T;
+    } catch (err) {
+      if (attempt < retries) {
+        await new Promise((r) => setTimeout(r, 350 * (attempt + 1)));
+        continue;
+      }
+      throw err;
+    } finally {
+      clearTimeout(timer);
     }
-    return (await res.json()) as T;
-  } finally {
-    clearTimeout(timer);
   }
+  throw new Error(`Exhausted retries for ${url}`);
 }
 
 function extractYoutubeThumb(videoUrl: string | null | undefined): string | null {
@@ -492,169 +505,212 @@ async function fetchTop10Data(
   const summaries: Top10LevelSummary[] = [];
   const victorEvents: { key: string; event: TrackerEvent }[] = [];
 
-  await Promise.all(
-    pcTop10.map(async (pc) => {
-      const ar = pc.level_id ? aredlByLevelId.get(pc.level_id) : undefined;
-      const [pcDetailRes, aredlDetailRes, aredlRecordsRes] = await Promise.allSettled([
-        fetchJson<{ data: PcFullDemon }>(`https://pointercrate.com/api/v2/demons/${pc.id}/`),
-        pc.level_id
-          ? fetchJson<AredlLevelDetail>(`https://api.aredl.net/v2/api/aredl/levels/${pc.level_id}`)
-          : Promise.reject(new Error('No level_id')),
-        pc.level_id
-          ? fetchJson<{ data: AredlVerificationOrRecord[] }>(
-              `https://api.aredl.net/v2/api/aredl/levels/${pc.level_id}/records?per_page=100`
-            )
-          : Promise.reject(new Error('No level_id')),
-      ]);
+  const prevByPcId = new Map<number, Top10LevelSummary>();
+  for (const prev of cache.top10) {
+    if (prev.pointercrateId) prevByPcId.set(prev.pointercrateId, prev);
+  }
 
-      const victorMap = new Map<string, DemonVictor>();
+  // Fetch in polite batches of 2 levels to avoid Pointercrate / AREDL burst rate limits
+  for (let i = 0; i < pcTop10.length; i += 2) {
+    const batch = pcTop10.slice(i, i + 2);
+    await Promise.all(
+      batch.map(async (pc) => {
+        const ar = pc.level_id ? aredlByLevelId.get(pc.level_id) : undefined;
+        const [pcDetailRes, aredlDetailRes, aredlRecordsRes] = await Promise.allSettled([
+          fetchJson<{ data: PcFullDemon }>(`https://pointercrate.com/api/v2/demons/${pc.id}/`),
+          pc.level_id
+            ? fetchJson<AredlLevelDetail>(`https://api.aredl.net/v2/api/aredl/levels/${pc.level_id}`)
+            : Promise.reject(new Error('No level_id')),
+          pc.level_id
+            ? fetchJson<{ data: AredlVerificationOrRecord[] }>(
+                `https://api.aredl.net/v2/api/aredl/levels/${pc.level_id}/records?per_page=100`
+              )
+            : Promise.reject(new Error('No level_id')),
+        ]);
 
-      if (pcDetailRes.status === 'fulfilled') {
-        const pcRecords = pcDetailRes.value.data.records ?? [];
-        for (const rec of pcRecords) {
-          if (rec.status !== 'approved' || rec.progress < 100) continue;
-          const norm = normalizePlayerName(rec.player.name);
-          victorMap.set(norm, {
-            id: `pc-rec-${rec.id}`,
-            playerName: rec.player.name,
-            countryCode: rec.nationality?.country_code ?? null,
-            progress: rec.progress,
-            video: rec.video,
-            achievedAt: null,
-            source: 'Pointercrate',
-            isVerification: false,
-            mobile: false,
-          });
-        }
-      }
-
-      if (aredlDetailRes.status === 'fulfilled') {
-        const verifications = aredlDetailRes.value.verifications ?? [];
-        for (const v of verifications) {
-          const name = v.submitted_by.global_name || v.submitted_by.username;
-          const norm = normalizePlayerName(name);
-          const existing = victorMap.get(norm);
-          if (existing) {
-            existing.source = 'Both';
-            existing.achievedAt = v.achieved_at ?? v.created_at ?? existing.achievedAt;
-            existing.isVerification = true;
-            if (!existing.video && v.video_url) existing.video = v.video_url;
-          } else {
-            victorMap.set(norm, {
-              id: `aredl-ver-${v.id}`,
-              playerName: name,
-              countryCode: isoCountryFromNumeric(v.submitted_by.country),
-              progress: 100,
-              video: v.hide_video ? null : v.video_url,
-              achievedAt: v.achieved_at ?? v.created_at ?? null,
-              source: 'AREDL',
-              isVerification: true,
-              mobile: v.mobile,
+        // If both record sources failed due to transient network/rate-limit, keep prior victors
+        if (pcDetailRes.status === 'rejected' && aredlRecordsRes.status === 'rejected') {
+          const prev = prevByPcId.get(pc.id);
+          if (prev) {
+            summaries.push({
+              ...prev,
+              rank: pc.position,
+              aredlPoints: ar?.points ?? prev.aredlPoints,
             });
+            return;
           }
         }
-      }
 
-      if (aredlRecordsRes.status === 'fulfilled') {
-        const records = aredlRecordsRes.value.data ?? [];
-        for (const r of records) {
-          const name = r.submitted_by.global_name || r.submitted_by.username;
-          const norm = normalizePlayerName(name);
-          const existing = victorMap.get(norm);
-          const achieved = r.achieved_at ?? r.created_at ?? null;
-          if (existing) {
-            existing.source = 'Both';
-            if (!existing.achievedAt && achieved) existing.achievedAt = achieved;
-            if (!existing.video && !r.hide_video && r.video_url) existing.video = r.video_url;
-            if (!existing.countryCode) existing.countryCode = isoCountryFromNumeric(r.submitted_by.country);
-          } else {
+        const victorMap = new Map<string, DemonVictor>();
+
+        if (pcDetailRes.status === 'fulfilled') {
+          const pcRecords = pcDetailRes.value.data.records ?? [];
+          for (const rec of pcRecords) {
+            if (rec.status !== 'approved' || rec.progress < 100) continue;
+            const norm = normalizePlayerName(rec.player.name);
             victorMap.set(norm, {
-              id: `aredl-rec-${r.id}`,
-              playerName: name,
-              countryCode: isoCountryFromNumeric(r.submitted_by.country),
-              progress: 100,
-              video: r.hide_video ? null : r.video_url,
-              achievedAt: achieved,
-              source: 'AREDL',
+              id: `pc-rec-${rec.id}`,
+              playerName: rec.player.name,
+              countryCode: rec.nationality?.country_code ?? null,
+              progress: rec.progress,
+              video: rec.video,
+              achievedAt: null,
+              source: 'Pointercrate',
               isVerification: false,
-              mobile: r.mobile,
+              mobile: false,
             });
           }
+        }
 
-          if (!existing) {
-            const vKey = `${pc.level_id ?? pc.id}:${norm}`;
-            victorEvents.push({
-              key: vKey,
-              event: {
-                id: `victor-${pc.level_id ?? pc.id}-${norm}`,
-                type: 'top10_victor',
-                source: 'AREDL',
-                createdAt: achieved ?? new Date().toISOString(),
-                title: `${name} beat #${pc.position} ${pc.name}`,
-                summary: `100% completion verified on Top 10 level #${pc.position} ${pc.name}`,
-                levelName: pc.name,
-                levelId: pc.level_id,
-                newPosition: pc.position,
-                oldPosition: null,
+        if (aredlDetailRes.status === 'fulfilled') {
+          const verifications = aredlDetailRes.value.verifications ?? [];
+          for (const v of verifications) {
+            const name = v.submitted_by.global_name || v.submitted_by.username;
+            const norm = normalizePlayerName(name);
+            const existing = victorMap.get(norm);
+            if (existing) {
+              existing.source = 'Both';
+              existing.achievedAt = v.achieved_at ?? v.created_at ?? existing.achievedAt;
+              existing.isVerification = true;
+              if (!existing.video && v.video_url) existing.video = v.video_url;
+            } else {
+              victorMap.set(norm, {
+                id: `aredl-ver-${v.id}`,
                 playerName: name,
-                videoUrl: r.hide_video ? null : r.video_url,
-              },
+                countryCode: isoCountryFromNumeric(v.submitted_by.country),
+                progress: 100,
+                video: v.hide_video ? null : v.video_url,
+                achievedAt: v.achieved_at ?? v.created_at ?? null,
+                source: 'AREDL',
+                isVerification: true,
+                mobile: v.mobile,
+              });
+            }
+          }
+        }
+
+        // Always ensure Pointercrate verifier is represented even if AREDL verification wasn't returned
+        if (pc.verifier?.name) {
+          const verNorm = normalizePlayerName(pc.verifier.name);
+          if (!victorMap.has(verNorm)) {
+            victorMap.set(verNorm, {
+              id: `pc-ver-${pc.id}`,
+              playerName: pc.verifier.name,
+              countryCode: null,
+              progress: 100,
+              video: pc.video,
+              achievedAt: null,
+              source: 'Pointercrate',
+              isVerification: true,
+              mobile: false,
             });
           }
         }
-      }
 
-      // Also track all Pointercrate-approved 100% victors for diffing
-      for (const [norm, v] of victorMap.entries()) {
-        if (!v.isVerification) {
-          const vKey = `${pc.level_id ?? pc.id}:${norm}`;
-          if (!victorEvents.some((item) => item.key === vKey)) {
-            victorEvents.push({
-              key: vKey,
-              event: {
-                id: `victor-${pc.level_id ?? pc.id}-${norm}`,
-                type: 'top10_victor',
-                source: v.source === 'Both' ? 'Pointercrate' : v.source,
-                createdAt: v.achievedAt ?? new Date().toISOString(),
-                title: `${v.playerName} beat #${pc.position} ${pc.name}`,
-                summary: `100% completion approved on Top 10 level #${pc.position} ${pc.name}`,
-                levelName: pc.name,
-                levelId: pc.level_id,
-                newPosition: pc.position,
-                oldPosition: null,
-                playerName: v.playerName,
-                videoUrl: v.video,
-              },
-            });
+        if (aredlRecordsRes.status === 'fulfilled') {
+          const records = aredlRecordsRes.value.data ?? [];
+          for (const r of records) {
+            const name = r.submitted_by.global_name || r.submitted_by.username;
+            const norm = normalizePlayerName(name);
+            const existing = victorMap.get(norm);
+            const achieved = r.achieved_at ?? r.created_at ?? null;
+            if (existing) {
+              existing.source = 'Both';
+              if (!existing.achievedAt && achieved) existing.achievedAt = achieved;
+              if (!existing.video && !r.hide_video && r.video_url) existing.video = r.video_url;
+              if (!existing.countryCode) existing.countryCode = isoCountryFromNumeric(r.submitted_by.country);
+            } else {
+              victorMap.set(norm, {
+                id: `aredl-rec-${r.id}`,
+                playerName: name,
+                countryCode: isoCountryFromNumeric(r.submitted_by.country),
+                progress: 100,
+                video: r.hide_video ? null : r.video_url,
+                achievedAt: achieved,
+                source: 'AREDL',
+                isVerification: false,
+                mobile: r.mobile,
+              });
+            }
+
+            if (!existing) {
+              const vKey = `${pc.level_id ?? pc.id}:${norm}`;
+              victorEvents.push({
+                key: vKey,
+                event: {
+                  id: `victor-${pc.level_id ?? pc.id}-${norm}`,
+                  type: 'top10_victor',
+                  source: 'AREDL',
+                  createdAt: achieved ?? new Date().toISOString(),
+                  title: `${name} beat #${pc.position} ${pc.name}`,
+                  summary: `100% completion verified on Top 10 level #${pc.position} ${pc.name}`,
+                  levelName: pc.name,
+                  levelId: pc.level_id,
+                  newPosition: pc.position,
+                  oldPosition: null,
+                  playerName: name,
+                  videoUrl: r.hide_video ? null : r.video_url,
+                },
+              });
+            }
           }
         }
-      }
 
-      const victors = [...victorMap.values()].sort((a, b) => {
-        if (a.isVerification !== b.isVerification) return a.isVerification ? -1 : 1;
-        if (a.achievedAt && b.achievedAt) {
-          return new Date(b.achievedAt).getTime() - new Date(a.achievedAt).getTime();
+        // Also track all Pointercrate-approved 100% victors for diffing
+        for (const [norm, v] of victorMap.entries()) {
+          if (!v.isVerification) {
+            const vKey = `${pc.level_id ?? pc.id}:${norm}`;
+            if (!victorEvents.some((item) => item.key === vKey)) {
+              victorEvents.push({
+                key: vKey,
+                event: {
+                  id: `victor-${pc.level_id ?? pc.id}-${norm}`,
+                  type: 'top10_victor',
+                  source: v.source === 'Both' ? 'Pointercrate' : v.source,
+                  createdAt: v.achievedAt ?? new Date().toISOString(),
+                  title: `${v.playerName} beat #${pc.position} ${pc.name}`,
+                  summary: `100% completion approved on Top 10 level #${pc.position} ${pc.name}`,
+                  levelName: pc.name,
+                  levelId: pc.level_id,
+                  newPosition: pc.position,
+                  oldPosition: null,
+                  playerName: v.playerName,
+                  videoUrl: v.video,
+                },
+              });
+            }
+          }
         }
-        return a.playerName.localeCompare(b.playerName);
-      });
 
-      summaries.push({
-        rank: pc.position,
-        levelId: pc.level_id,
-        pointercrateId: pc.id,
-        aredlId: ar?.id ?? null,
-        name: pc.name,
-        publisher: pc.publisher?.name ?? null,
-        verifier: pc.verifier?.name ?? null,
-        requirement: pc.requirement,
-        thumbnail: pc.thumbnail ?? extractYoutubeThumb(pc.video),
-        video: pc.video,
-        aredlPoints: ar?.points ?? null,
-        victorCount: victors.filter((v) => !v.isVerification).length,
-        victors,
-      });
-    })
-  );
+        const victors = [...victorMap.values()].sort((a, b) => {
+          if (a.isVerification !== b.isVerification) return a.isVerification ? -1 : 1;
+          if (a.achievedAt && b.achievedAt) {
+            return new Date(b.achievedAt).getTime() - new Date(a.achievedAt).getTime();
+          }
+          return a.playerName.localeCompare(b.playerName);
+        });
+
+        summaries.push({
+          rank: pc.position,
+          levelId: pc.level_id,
+          pointercrateId: pc.id,
+          aredlId: ar?.id ?? null,
+          name: pc.name,
+          publisher: pc.publisher?.name ?? null,
+          verifier: pc.verifier?.name ?? null,
+          requirement: pc.requirement,
+          thumbnail: pc.thumbnail ?? extractYoutubeThumb(pc.video),
+          video: pc.video,
+          aredlPoints: ar?.points ?? null,
+          victorCount: victors.filter((v) => !v.isVerification).length,
+          victors,
+        });
+      })
+    );
+    if (i + 2 < pcTop10.length) {
+      await new Promise((r) => setTimeout(r, 150));
+    }
+  }
 
   summaries.sort((a, b) => a.rank - b.rank);
   return { summaries, victorEvents };
@@ -685,7 +741,7 @@ async function syncAllSources(manual = false): Promise<{ newEvents: TrackerEvent
             score: number;
             nationality?: { country_code?: string; nation?: string } | null;
           }>
-        >('https://pointercrate.com/api/v1/players/ranking/?limit=100'),
+        >('https://pointercrate.com/api/v1/players/ranking/?limit=100&list=demonlist'),
         fetchJson<{
           data: Array<{
             rank: number;
@@ -697,11 +753,39 @@ async function syncAllSources(manual = false): Promise<{ newEvents: TrackerEvent
         }>('https://api.aredl.net/v2/api/aredl/leaderboard?per_page=100'),
       ]);
 
-    const pcDemons: PcListedDemon[] = [];
-    if (pcPage1Res.status === 'fulfilled') pcDemons.push(...pcPage1Res.value);
-    if (pcPage2Res.status === 'fulfilled') pcDemons.push(...pcPage2Res.value);
-    if (pcDemons.length > 0) {
-      cache.pcDemons = pcDemons;
+    const rawPcDemons: PcListedDemon[] = [];
+    if (pcPage1Res.status === 'fulfilled') rawPcDemons.push(...pcPage1Res.value);
+    if (pcPage2Res.status === 'fulfilled') rawPcDemons.push(...pcPage2Res.value);
+
+    // Ensure we captured all Classic Top 150 rated demons even if >50 unrated levels appear in Rated+
+    if (rawPcDemons.length > 0) {
+      const maxRatedPos = rawPcDemons.reduce((max, d) => Math.max(max, d.rated_position ?? 0), 0);
+      if (maxRatedPos < 150) {
+        const lastPos = rawPcDemons[rawPcDemons.length - 1]?.position ?? 200;
+        try {
+          const pcPage3 = await fetchJson<PcListedDemon[]>(
+            `https://pointercrate.com/api/v2/demons/listed/?limit=100&after=${lastPos}`
+          );
+          rawPcDemons.push(...pcPage3);
+        } catch {
+          // ignore fallback page error
+        }
+      }
+    }
+
+    const classicPcDemons: PcListedDemon[] = rawPcDemons
+      .filter(
+        (d): d is PcListedDemon & { rated_position: number } =>
+          Boolean(d.rated) && d.rated_position !== null && d.rated_position >= 1 && d.rated_position <= 150
+      )
+      .sort((a, b) => a.rated_position - b.rated_position)
+      .map((d) => ({
+        ...d,
+        position: d.rated_position,
+      }));
+
+    if (classicPcDemons.length > 0) {
+      cache.pcDemons = classicPcDemons;
     }
 
     if (aredlLevelsRes.status === 'fulfilled') {
@@ -785,12 +869,13 @@ async function syncAllSources(manual = false): Promise<{ newEvents: TrackerEvent
 
     // Diffing & Event Generation
     const isInitial = !snapshot.initialized;
+    const isMigratingFromRatedPlus = Object.keys(snapshot.pcPositions).length > 150;
     const nextPcPositions: PersistedSnapshot['pcPositions'] = {};
     for (const d of cache.pcDemons) {
       const idStr = String(d.id);
       nextPcPositions[idStr] = { position: d.position, requirement: d.requirement, name: d.name };
 
-      if (!isInitial) {
+      if (!isInitial && !isMigratingFromRatedPlus) {
         const prev = snapshot.pcPositions[idStr];
         if (!prev) {
           const ev: TrackerEvent = {
@@ -1350,7 +1435,10 @@ async function startServer(): Promise<void> {
       if (tier === 'top10' && pos > 10) return false;
       if (tier === 'main' && (pos < 1 || pos > 75)) return false;
       if (tier === 'extended' && (pos < 76 || pos > 150)) return false;
-      if (tier === 'legacy' && d.aredlStatus !== 'Legacy' && pos <= 150) return false;
+      if (tier === 'legacy') {
+        if (source === 'pointercrate') return false;
+        if (pos <= 150) return false;
+      }
 
       if (q) {
         const matchName = d.name.toLowerCase().includes(q);
