@@ -10,14 +10,27 @@ import {
   ChevronRight,
   Crown,
   ExternalLink,
+  KeyRound,
   ListOrdered,
+  LogIn,
+  LogOut,
   Menu,
   RefreshCw,
   Search,
+  Settings,
+  ShieldCheck,
   Trophy,
+  UserPlus,
   Users,
   X,
 } from 'lucide-react';
+import {
+  AccountSettingsView,
+  loadAppPreferences,
+  saveAppPreferences,
+  type AppPreferences,
+} from './components/AccountSettingsView';
+import { AuthPages, type AuthPageMode } from './components/AuthPages';
 import { CalendarView } from './components/CalendarView';
 import { ChangelogView } from './components/ChangelogView';
 import { DemonDetailModal } from './components/DemonDetailModal';
@@ -25,6 +38,7 @@ import { DemonThumbnail } from './components/DemonThumbnail';
 import { NotificationDrawer } from './components/NotificationDrawer';
 import { PlayersView } from './components/PlayersView';
 import { Top10WatchView } from './components/Top10WatchView';
+import { useAuth } from './contexts/AuthContext';
 import type {
   ListSource,
   ListTier,
@@ -44,7 +58,16 @@ import {
   shouldTriggerForEvent,
 } from './utils/notifications';
 
-type ActiveView = 'demonlist' | 'top10' | 'calendar' | 'changelog' | 'players';
+type ActiveView =
+  | 'demonlist'
+  | 'top10'
+  | 'calendar'
+  | 'changelog'
+  | 'players'
+  | 'settings'
+  | 'login'
+  | 'register'
+  | 'forgot';
 
 interface ToastItem {
   id: string;
@@ -57,14 +80,46 @@ const VIEW_LABELS: Record<ActiveView, string> = {
   calendar: 'Calendar',
   changelog: 'Live Changelog',
   players: 'Player Rankings',
+  settings: 'Account Settings',
+  login: 'Sign In',
+  register: 'Create Account',
+  forgot: 'Reset Password',
 };
 
+function viewFromHash(fallbackView: ActiveView = 'demonlist'): ActiveView {
+  const hash = window.location.hash.replace(/^#/, '').toLowerCase();
+  if (hash === 'login') return 'login';
+  if (hash === 'register') return 'register';
+  if (hash === 'forgot' || hash === 'forgot-password') return 'forgot';
+  if (hash === 'settings') return 'settings';
+  if (hash === 'top10') return 'top10';
+  if (hash === 'calendar') return 'calendar';
+  if (hash === 'changelog') return 'changelog';
+  if (hash === 'players') return 'players';
+  if (hash === 'demonlist') return 'demonlist';
+  return fallbackView;
+}
+
 export default function App() {
-  const [activeView, setActiveView] = useState<ActiveView>('demonlist');
+  const {
+    user,
+    authReady,
+    profile,
+    resendVerificationEmail,
+    refreshVerificationStatus,
+    signOutUser,
+    syncSettingsToCloud,
+    onSettingsLoadedFromCloud,
+  } = useAuth();
+
+  const [appPrefs, setAppPrefs] = useState<AppPreferences>(() => loadAppPreferences());
+  const [activeView, setActiveView] = useState<ActiveView>(() => viewFromHash(loadAppPreferences().defaultView));
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [verifyNotice, setVerifyNotice] = useState<string | null>(null);
+  const [verifyBusy, setVerifyBusy] = useState(false);
 
   // Filters & Pagination
-  const [source, setSource] = useState<ListSource>('all');
+  const [source, setSource] = useState<ListSource>(() => loadAppPreferences().defaultSource);
   const [tier, setTier] = useState<ListTier>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -109,6 +164,20 @@ export default function App() {
 
   const settingsRef = useRef(notifSettings);
   settingsRef.current = notifSettings;
+
+  useEffect(() => {
+    onSettingsLoadedFromCloud((loaded) => {
+      setNotifSettings(loaded);
+    });
+  }, [onSettingsLoadedFromCloud]);
+
+  useEffect(() => {
+    const onHashChange = () => {
+      setActiveView(viewFromHash());
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
 
   // Debounce search query
   useEffect(() => {
@@ -275,6 +344,11 @@ export default function App() {
   const handleUpdateSettings = (next: NotificationSettings) => {
     setNotifSettings(next);
     saveNotificationSettings(next);
+    if (user?.emailVerified) {
+      void syncSettingsToCloud(next).catch((err) => {
+        console.warn('Could not sync alert settings to cloud:', err);
+      });
+    }
   };
 
   const handleRequestPermission = async () => {
@@ -305,16 +379,26 @@ export default function App() {
       const perm = await Notification.requestPermission();
       setNotifPermission(perm);
     }
-    await fetch('/api/notifications/test', {
+    const res = await fetch('/api/notifications/test', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ kind }),
     });
+    if (res.ok) {
+      const data = (await res.json()) as { event?: TrackerEvent };
+      if (data.event) {
+        handleIncomingEvent(data.event);
+      }
+    }
   };
 
   const handleSelectNav = (view: ActiveView) => {
     setActiveView(view);
     setMobileNavOpen(false);
+    const targetHash = view === 'forgot' ? '#forgot-password' : `#${view}`;
+    if (window.location.hash !== targetHash) {
+      window.history.replaceState(null, '', targetHash);
+    }
     if (view === 'top10') {
       void fetchTop10();
     }
@@ -323,6 +407,41 @@ export default function App() {
       void fetchEvents();
     }
   };
+
+  const handleResendVerification = async () => {
+    setVerifyBusy(true);
+    setVerifyNotice(null);
+    try {
+      await resendVerificationEmail();
+      setVerifyNotice('Verification email sent. Check your inbox.');
+    } catch (err) {
+      setVerifyNotice(err instanceof Error ? err.message : 'Failed to send email.');
+    } finally {
+      setVerifyBusy(false);
+    }
+  };
+
+  const handleCheckVerification = async () => {
+    setVerifyBusy(true);
+    setVerifyNotice(null);
+    try {
+      const verified = await refreshVerificationStatus();
+      setVerifyNotice(verified ? 'Email verified! Settings synced.' : 'Not verified yet — click the link in your email.');
+    } catch {
+      setVerifyNotice('Could not refresh status.');
+    } finally {
+      setVerifyBusy(false);
+    }
+  };
+
+  const handleUpdatePrefs = (next: AppPreferences) => {
+    setAppPrefs(next);
+    saveAppPreferences(next);
+  };
+
+  const resolvedAvatarUrl =
+    profile?.avatarUrl || (user?.photoURL && user.photoURL.startsWith('https://') ? user.photoURL : '') || '';
+  const resolvedDisplayName = profile?.displayName || user?.displayName || 'Player';
 
   return (
     <MotionConfig reducedMotion="user">
@@ -377,6 +496,7 @@ export default function App() {
               { id: 'calendar', label: 'Calendar', icon: CalendarIcon, accent: 'text-rose-400' },
               { id: 'changelog', label: 'Live Changelog', icon: Activity, accent: 'text-rose-400' },
               { id: 'players', label: 'Player Rankings', icon: Users, accent: 'text-rose-400' },
+              { id: 'settings', label: 'Settings', icon: Settings, accent: 'text-rose-400' },
             ] as const
           ).map((navItem) => {
             const Icon = navItem.icon;
@@ -413,6 +533,119 @@ export default function App() {
         </nav>
 
         <div className="border-t border-white/[0.08] p-4 space-y-3">
+          {/* Account Card */}
+          {authReady && (
+            <div className="rounded-xl border border-white/[0.08] bg-[#111521] p-3">
+              {user ? (
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleSelectNav('settings')}
+                      className="flex min-w-0 flex-1 items-center gap-2.5 rounded-lg text-left transition-opacity hover:opacity-90"
+                      title="Open Account Settings"
+                    >
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-rose-500/15 font-display text-xs font-bold text-rose-300">
+                        {resolvedAvatarUrl ? (
+                          <img
+                            src={resolvedAvatarUrl}
+                            alt={resolvedDisplayName}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          (resolvedDisplayName || user.email || 'P').slice(0, 1).toUpperCase()
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="truncate text-xs font-semibold text-white">{resolvedDisplayName}</div>
+                        <div className="flex items-center gap-1 text-[11px] text-slate-400">
+                          {user.emailVerified ? (
+                            <>
+                              <ShieldCheck className="h-3 w-3 shrink-0 text-emerald-400" />
+                              <span className="truncate text-emerald-400">Verified</span>
+                            </>
+                          ) : (
+                            <span className="truncate text-amber-400">Verify email</span>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void signOutUser()}
+                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-white/[0.06] hover:text-white"
+                      title="Sign out"
+                      aria-label="Sign out"
+                    >
+                      <LogOut className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+
+                  {!user.emailVerified && (
+                    <div className="space-y-2 border-t border-white/[0.06] pt-2">
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          disabled={verifyBusy}
+                          onClick={() => void handleResendVerification()}
+                          className="flex-1 rounded-md border border-white/[0.1] bg-[#161B28] px-2 py-1 text-[11px] font-medium text-slate-200 hover:bg-[#1E2536] disabled:opacity-60"
+                        >
+                          Resend link
+                        </button>
+                        <button
+                          type="button"
+                          disabled={verifyBusy}
+                          onClick={() => void handleCheckVerification()}
+                          className="flex-1 rounded-md bg-rose-600/90 px-2 py-1 text-[11px] font-medium text-white hover:bg-rose-500 disabled:opacity-60"
+                        >
+                          I verified
+                        </button>
+                      </div>
+                      {verifyNotice && <p className="text-[11px] leading-snug text-slate-300">{verifyNotice}</p>}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleSelectNav('login')}
+                      className={`inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 py-2 text-xs font-semibold transition-colors whitespace-nowrap ${
+                        activeView === 'login'
+                          ? 'bg-rose-600 text-white'
+                          : 'border border-white/[0.1] bg-[#161B28] text-slate-200 hover:bg-[#1E2536]'
+                      }`}
+                    >
+                      <LogIn className="h-3.5 w-3.5" />
+                      <span>Sign In</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleSelectNav('register')}
+                      className={`inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 py-2 text-xs font-semibold transition-colors whitespace-nowrap ${
+                        activeView === 'register'
+                          ? 'bg-rose-600 text-white'
+                          : 'bg-rose-600/15 text-rose-300 hover:bg-rose-600/25'
+                      }`}
+                    >
+                      <UserPlus className="h-3.5 w-3.5" />
+                      <span>Register</span>
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectNav('forgot')}
+                    className="flex w-full items-center justify-center gap-1.5 text-[11px] text-slate-400 transition-colors hover:text-slate-200"
+                  >
+                    <KeyRound className="h-3 w-3" />
+                    <span>Forgot password?</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="space-y-1 text-xs text-slate-400">
             <div className="flex items-center justify-between">
               <span>Pointercrate</span>
@@ -444,7 +677,7 @@ export default function App() {
       {/* Main Content Area */}
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Top Bar (Strict 3-Zone Contract) */}
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-8 border-b border-white/[0.08] bg-[#090B10]/90 px-4 backdrop-blur-md sm:px-8">
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-white/[0.08] bg-[#090B10]/90 px-4 backdrop-blur-md sm:gap-8 sm:px-8">
           <div className="flex items-center gap-3 shrink-0">
             <button
               type="button"
@@ -470,17 +703,45 @@ export default function App() {
             />
           </div>
 
-          <div className="shrink-0">
+          <div className="flex items-center gap-2.5 shrink-0">
+            {authReady && !user && (
+              <button
+                type="button"
+                onClick={() => handleSelectNav('login')}
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-white/[0.1] bg-[#121622] px-3 text-xs font-semibold text-slate-200 transition-colors hover:bg-[#1A2030] whitespace-nowrap shrink-0"
+              >
+                <LogIn className="h-3.5 w-3.5 text-rose-400" />
+                <span>Sign In</span>
+              </button>
+            )}
+            {authReady && user && (
+              <button
+                type="button"
+                onClick={() => handleSelectNav('settings')}
+                className="inline-flex h-9 items-center gap-2 rounded-lg border border-white/[0.1] bg-[#121622] px-2.5 text-xs font-semibold text-slate-200 transition-colors hover:bg-[#1A2030] whitespace-nowrap shrink-0"
+                title="Account Settings"
+              >
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded bg-rose-500/20 font-display text-[10px] font-bold text-rose-300">
+                  {resolvedAvatarUrl ? (
+                    <img src={resolvedAvatarUrl} alt={resolvedDisplayName} className="h-full w-full object-cover" />
+                  ) : (
+                    resolvedDisplayName.slice(0, 1).toUpperCase()
+                  )}
+                </span>
+                <span className="hidden max-w-[110px] truncate sm:inline">{resolvedDisplayName}</span>
+              </button>
+            )}
             <button
               type="button"
               onClick={() => setNotifDrawerOpen(true)}
-              className="inline-flex h-9 items-center gap-2 rounded-lg bg-rose-600 px-4 text-xs font-semibold text-white transition-colors hover:bg-rose-500 focus-visible:outline-2 focus-visible:outline-rose-400 whitespace-nowrap shrink-0"
+              className="inline-flex h-9 items-center gap-2 rounded-lg bg-rose-600 px-3.5 text-xs font-semibold text-white transition-colors hover:bg-rose-500 focus-visible:outline-2 focus-visible:outline-rose-400 whitespace-nowrap shrink-0 sm:px-4"
             >
               <Bell className="h-3.5 w-3.5" />
-              <span>
+              <span className="hidden sm:inline">
                 {notifPermission === 'granted' ? 'Alerts Active' : 'Enable Alerts'}
                 {unreadCount > 0 ? ` (${unreadCount})` : ''}
               </span>
+              <span className="sm:hidden">Alerts{unreadCount > 0 ? ` (${unreadCount})` : ''}</span>
             </button>
           </div>
         </header>
@@ -679,7 +940,7 @@ export default function App() {
                           className="group cursor-pointer transition-colors hover:bg-white/[0.025]"
                           onClick={() => setSelectedDemonKey(demon.key)}
                         >
-                          <td className="px-3 py-3 font-mono tabular-nums sm:px-4">
+                          <td className={`${appPrefs.compactRows ? 'px-3 py-2' : 'px-3 py-3'} font-mono tabular-nums sm:px-4`}>
                             <div className="flex items-center gap-1.5">
                               <span
                                 className={`text-sm font-bold ${
@@ -710,13 +971,15 @@ export default function App() {
                             </div>
                           </td>
 
-                          <td className="px-3 py-3 sm:px-4">
+                          <td className={`${appPrefs.compactRows ? 'px-3 py-2' : 'px-3 py-3'} sm:px-4`}>
                             <div className="flex min-w-0 items-center gap-3.5">
                               <DemonThumbnail
                                 src={demon.thumbnail}
                                 alt={demon.name}
                                 rank={demon.rank}
-                                className="hidden h-11 w-20 shrink-0 rounded-md sm:block"
+                                className={`hidden shrink-0 rounded-md sm:block ${
+                                  appPrefs.compactRows ? 'h-9 w-16' : 'h-11 w-20'
+                                }`}
                               />
                               <div className="min-w-0 flex-1">
                                 <div className="truncate font-display text-sm font-semibold text-white transition-colors group-hover:text-rose-400">
@@ -740,15 +1003,15 @@ export default function App() {
                             </div>
                           </td>
 
-                          <td className="hidden px-4 py-3 font-mono text-xs text-slate-300 tabular-nums md:table-cell">
+                          <td className={`hidden px-4 ${appPrefs.compactRows ? 'py-2' : 'py-3'} font-mono text-xs text-slate-300 tabular-nums md:table-cell`}>
                             {demon.pointercratePosition ? `#${demon.pointercratePosition}` : '—'}
                           </td>
 
-                          <td className="hidden px-4 py-3 font-mono text-xs text-slate-300 tabular-nums md:table-cell">
+                          <td className={`hidden px-4 ${appPrefs.compactRows ? 'py-2' : 'py-3'} font-mono text-xs text-slate-300 tabular-nums md:table-cell`}>
                             {demon.aredlPosition ? `#${demon.aredlPosition}` : '—'}
                           </td>
 
-                          <td className="hidden px-4 py-3 text-right font-mono text-xs tabular-nums sm:table-cell">
+                          <td className={`hidden px-4 ${appPrefs.compactRows ? 'py-2' : 'py-3'} text-right font-mono text-xs tabular-nums sm:table-cell`}>
                             <div className="font-medium text-slate-200">
                               {demon.aredlPoints !== null ? `${demon.aredlPoints.toLocaleString()} pts` : '—'}
                             </div>
@@ -758,7 +1021,7 @@ export default function App() {
                           </td>
 
                           <td
-                            className="px-3 py-3 text-right sm:px-4"
+                            className={`${appPrefs.compactRows ? 'px-3 py-2' : 'px-3 py-3'} text-right sm:px-4`}
                             onClick={(e) => {
                               e.stopPropagation();
                             }}
@@ -845,6 +1108,25 @@ export default function App() {
               source={playerSource}
               onChangeSource={setPlayerSource}
               loading={playersLoading}
+            />
+          )}
+
+          {activeView === 'settings' && (
+            <AccountSettingsView
+              prefs={appPrefs}
+              onUpdatePrefs={handleUpdatePrefs}
+              onOpenAlertSettings={() => setNotifDrawerOpen(true)}
+              onNavigateAuth={(mode) => handleSelectNav(mode)}
+              onAccountDeleted={() => handleSelectNav('demonlist')}
+            />
+          )}
+
+          {(activeView === 'login' || activeView === 'register' || activeView === 'forgot') && (
+            <AuthPages
+              mode={activeView as AuthPageMode}
+              onSwitchMode={(nextMode) => handleSelectNav(nextMode)}
+              onSuccess={() => handleSelectNav('demonlist')}
+              onBackToList={() => handleSelectNav('demonlist')}
             />
           )}
             </motion.div>

@@ -1,0 +1,123 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isVerifiedOwner(userId) {
+      return isOwner(userId) && isEmailVerified();
+    }
+
+    function isValidAvatarUrl(url) {
+      return url is string
+        && url.size() <= 24000
+        && url.matches('^(|https://.+|data:image/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+)$');
+    }
+
+    function isValidUserProfile(data) {
+      return data.keys().hasAll([
+          'uid',
+          'displayName',
+          'avatarUrl',
+          'role',
+          'browserEnabled',
+          'soundEnabled',
+          'notifyPlaced',
+          'notifyUpdated',
+          'notifyTop10Victor',
+          'sourcePointercrate',
+          'sourceAredl',
+          'createdAt',
+          'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'uid',
+          'displayName',
+          'avatarUrl',
+          'role',
+          'browserEnabled',
+          'soundEnabled',
+          'notifyPlaced',
+          'notifyUpdated',
+          'notifyTop10Victor',
+          'sourcePointercrate',
+          'sourceAredl',
+          'createdAt',
+          'updatedAt'
+        ])
+        && isValidId(data.uid)
+        && data.uid == request.auth.uid
+        && data.displayName is string
+        && data.displayName.size() >= 1
+        && data.displayName.size() <= 40
+        && isValidAvatarUrl(data.avatarUrl)
+        && data.role == 'member'
+        && data.browserEnabled is bool
+        && data.soundEnabled is bool
+        && data.notifyPlaced is bool
+        && data.notifyUpdated is bool
+        && data.notifyTop10Victor is bool
+        && data.sourcePointercrate is bool
+        && data.sourceAredl is bool
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    match /users/{userId} {
+      allow get: if isValidId(userId) && isOwner(userId);
+      allow list: if false;
+      allow create: if isValidId(userId)
+        && isVerifiedOwner(userId)
+        && isValidUserProfile(incoming())
+        && incoming().uid == userId
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isValidId(userId)
+        && isVerifiedOwner(userId)
+        && isValidUserProfile(incoming())
+        && incoming().uid == existing().uid
+        && incoming().role == existing().role
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'displayName',
+          'avatarUrl',
+          'browserEnabled',
+          'soundEnabled',
+          'notifyPlaced',
+          'notifyUpdated',
+          'notifyTop10Victor',
+          'sourcePointercrate',
+          'sourceAredl',
+          'updatedAt'
+        ]);
+      allow delete: if isValidId(userId) && isVerifiedOwner(userId);
+    }
+  }
+}

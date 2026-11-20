@@ -1,0 +1,97 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Private user account profile and alert notification preferences.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Auth user UID matching the document ID.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "User display name shown in the navigation account badge.",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "avatarUrl": {
+          "type": "string",
+          "description": "Optional HTTPS image URL or compressed 128x128 WebP/JPEG/PNG data URI.",
+          "minLength": 0,
+          "maxLength": 24000,
+          "pattern": "^(|https://.+|data:image/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+)$"
+        },
+        "role": {
+          "type": "string",
+          "description": "Assigned user role.",
+          "enum": ["member"]
+        },
+        "browserEnabled": {
+          "type": "boolean",
+          "description": "Whether browser push popups are enabled."
+        },
+        "soundEnabled": {
+          "type": "boolean",
+          "description": "Whether notification chime audio is enabled."
+        },
+        "notifyPlaced": {
+          "type": "boolean",
+          "description": "Whether demon placement alerts are enabled."
+        },
+        "notifyUpdated": {
+          "type": "boolean",
+          "description": "Whether demon rank/requirement update alerts are enabled."
+        },
+        "notifyTop10Victor": {
+          "type": "boolean",
+          "description": "Whether Top 10 victor alerts are enabled."
+        },
+        "sourcePointercrate": {
+          "type": "boolean",
+          "description": "Whether Pointercrate alerts are monitored."
+        },
+        "sourceAredl": {
+          "type": "boolean",
+          "description": "Whether AREDL alerts are monitored."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the profile was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the profile was last updated."
+        }
+      },
+      "required": [
+        "uid",
+        "displayName",
+        "avatarUrl",
+        "role",
+        "browserEnabled",
+        "soundEnabled",
+        "notifyPlaced",
+        "notifyUpdated",
+        "notifyTop10Victor",
+        "sourcePointercrate",
+        "sourceAredl",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "Owner-only user profile and cloud-synced alert preferences."
+    }
+  }
+}

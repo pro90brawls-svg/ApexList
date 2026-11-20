@@ -995,7 +995,11 @@ async function syncAllSources(manual = false): Promise<{ newEvents: TrackerEvent
   }
 }
 
+const DETAIL_KEY_REGEX = /^[a-zA-Z0-9:_\-]{1,80}$/;
+
 async function getDemonDetail(keyParam: string): Promise<DemonDetail | null> {
+  if (!DETAIL_KEY_REGEX.test(keyParam)) return null;
+
   const cached = cache.detailCache.get(keyParam);
   if (cached && Date.now() - cached.fetchedAt < 120_000) {
     return cached.detail;
@@ -1141,6 +1145,10 @@ async function getDemonDetail(keyParam: string): Promise<DemonDetail | null> {
     songId,
   };
 
+  if (cache.detailCache.size >= 300) {
+    const oldestKey = cache.detailCache.keys().next().value;
+    if (oldestKey) cache.detailCache.delete(oldestKey);
+  }
   cache.detailCache.set(keyParam, { fetchedAt: Date.now(), detail });
   return detail;
 }
@@ -1395,13 +1403,89 @@ async function ensurePointercrateMonth(
       });
   }
 
+  if (cache.pcMonthCache.size >= 36) {
+    const oldestMonth = cache.pcMonthCache.keys().next().value;
+    if (oldestMonth && oldestMonth !== yearMonth) cache.pcMonthCache.delete(oldestMonth);
+  }
+
   return { events: mem?.events ?? [], scanning: true };
 }
 
 
+interface RateBucket {
+  count: number;
+  resetAt: number;
+}
+
+function createRateLimiter(maxRequests: number, windowMs: number, message: string): express.RequestHandler {
+  const buckets = new Map<string, RateBucket>();
+
+  setInterval(() => {
+    const now = Date.now();
+    for (const [k, v] of buckets.entries()) {
+      if (v.resetAt <= now) buckets.delete(k);
+    }
+  }, Math.max(windowMs, 30_000)).unref();
+
+  return (req, res, next) => {
+    const ip = req.ip || req.socket.remoteAddress || 'unknown';
+    const now = Date.now();
+    let bucket = buckets.get(ip);
+    if (!bucket || bucket.resetAt <= now) {
+      bucket = { count: 0, resetAt: now + windowMs };
+      if (buckets.size > 5000) buckets.clear();
+      buckets.set(ip, bucket);
+    }
+    bucket.count += 1;
+    res.setHeader('X-RateLimit-Limit', String(maxRequests));
+    res.setHeader('X-RateLimit-Remaining', String(Math.max(0, maxRequests - bucket.count)));
+    if (bucket.count > maxRequests) {
+      res.status(429).json({ error: message });
+      return;
+    }
+    next();
+  };
+}
+
+const VALID_SOURCES = new Set<ListSource>(['all', 'pointercrate', 'aredl']);
+const VALID_TIERS = new Set<ListTier>(['all', 'top10', 'main', 'extended', 'legacy']);
+const VALID_EVENT_TYPES = new Set(['all', 'demon_placed', 'demon_updated', 'top10_victor']);
+const VALID_EVENT_SOURCES = new Set(['all', 'pointercrate', 'aredl']);
+const VALID_TEST_KINDS = new Set(['demon_placed', 'demon_updated', 'top10_victor']);
+const sseConnectionsByIp = new Map<string, number>();
+let lastManualSyncAt = 0;
+
 async function startServer(): Promise<void> {
   const app = express();
-  app.use(express.json());
+  app.disable('x-powered-by');
+  app.set('trust proxy', 1);
+
+  // Security headers compatible with AI Studio preview iframe & Google OAuth popup
+  app.use((_req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+    next();
+  });
+
+  app.use(express.json({ limit: '16kb' }));
+  app.use(
+    (err: unknown, _req: express.Request, res: express.Response, next: express.NextFunction) => {
+      if (err instanceof SyntaxError && 'body' in err) {
+        res.status(400).json({ error: 'Invalid JSON request body' });
+        return;
+      }
+      next(err);
+    }
+  );
+
+  const apiReadLimiter = createRateLimiter(120, 60_000, 'Rate limit exceeded. Please wait a moment.');
+  const syncLimiter = createRateLimiter(4, 60_000, 'Too many manual sync requests. Please wait.');
+  const testNotifLimiter = createRateLimiter(6, 60_000, 'Too many test notification requests.');
+  const calendarLimiter = createRateLimiter(30, 60_000, 'Too many calendar requests. Please wait.');
+
+  app.use('/api', apiReadLimiter);
 
   // Start initial background sync right away
   void syncAllSources(false);
@@ -1414,10 +1498,12 @@ async function startServer(): Promise<void> {
   });
 
   app.get('/api/demons', (req, res) => {
-    const source = (req.query.source as ListSource) || 'all';
-    const tier = (req.query.tier as ListTier) || 'all';
-    const q = String(req.query.q ?? '').trim().toLowerCase();
-    const page = Math.max(1, Number(req.query.page ?? 1) || 1);
+    const rawSource = String(req.query.source ?? 'all') as ListSource;
+    const rawTier = String(req.query.tier ?? 'all') as ListTier;
+    const source: ListSource = VALID_SOURCES.has(rawSource) ? rawSource : 'all';
+    const tier: ListTier = VALID_TIERS.has(rawTier) ? rawTier : 'all';
+    const q = String(req.query.q ?? '').trim().slice(0, 100).toLowerCase();
+    const page = Math.min(500, Math.max(1, Number(req.query.page ?? 1) || 1));
     const limit = Math.min(100, Math.max(10, Number(req.query.limit ?? 50) || 50));
 
     let list = cache.unifiedDemons.filter((d) => {
@@ -1480,14 +1566,19 @@ async function startServer(): Promise<void> {
 
   app.get('/api/demons/:key', async (req, res) => {
     try {
-      const detail = await getDemonDetail(decodeURIComponent(req.params.key));
+      const decodedKey = decodeURIComponent(req.params.key).trim();
+      if (!DETAIL_KEY_REGEX.test(decodedKey)) {
+        res.status(400).json({ error: 'Invalid demon identifier' });
+        return;
+      }
+      const detail = await getDemonDetail(decodedKey);
       if (!detail) {
         res.status(404).json({ error: 'Demon not found' });
         return;
       }
       res.json(detail);
-    } catch (err) {
-      res.status(500).json({ error: err instanceof Error ? err.message : 'Failed to fetch demon detail' });
+    } catch {
+      res.status(500).json({ error: 'Failed to fetch demon detail' });
     }
   });
 
@@ -1499,8 +1590,9 @@ async function startServer(): Promise<void> {
   });
 
   app.get('/api/players', (req, res) => {
-    const source = String(req.query.source ?? 'pointercrate');
-    const q = String(req.query.q ?? '').trim().toLowerCase();
+    const rawSource = String(req.query.source ?? 'pointercrate');
+    const source = rawSource === 'aredl' ? 'aredl' : 'pointercrate';
+    const q = String(req.query.q ?? '').trim().slice(0, 100).toLowerCase();
     const list = source === 'aredl' ? cache.aredlPlayers : cache.pcPlayers;
     const filtered = q
       ? list.filter((p) => p.name.toLowerCase().includes(q) || (p.hardestLevel ?? '').toLowerCase().includes(q))
@@ -1512,11 +1604,13 @@ async function startServer(): Promise<void> {
   });
 
   app.get('/api/events', (req, res) => {
-    const type = String(req.query.type ?? 'all');
-    const source = String(req.query.source ?? 'all');
+    const rawType = String(req.query.type ?? 'all');
+    const rawSource = String(req.query.source ?? 'all').toLowerCase();
+    const type = VALID_EVENT_TYPES.has(rawType) ? rawType : 'all';
+    const source = VALID_EVENT_SOURCES.has(rawSource) ? rawSource : 'all';
     const filtered = snapshot.events.filter((ev) => {
       if (type !== 'all' && ev.type !== type) return false;
-      if (source !== 'all' && ev.source.toLowerCase() !== source.toLowerCase()) return false;
+      if (source !== 'all' && ev.source.toLowerCase() !== source) return false;
       return true;
     });
     res.json({
@@ -1525,11 +1619,18 @@ async function startServer(): Promise<void> {
     });
   });
 
-  app.get('/api/calendar', async (req, res) => {
+  app.get('/api/calendar', calendarLimiter, async (req, res) => {
     const rawMonth = String(req.query.month ?? '').trim();
     const now = new Date();
-    const defaultMonth = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`;
-    const month = /^\d{4}-\d{2}$/.test(rawMonth) ? rawMonth : defaultMonth;
+    const currentYear = now.getUTCFullYear();
+    const defaultMonth = `${currentYear}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`;
+    let month = defaultMonth;
+    if (/^\d{4}-(0[1-9]|1[0-2])$/.test(rawMonth)) {
+      const requestedYear = Number(rawMonth.slice(0, 4));
+      if (requestedYear >= 2017 && requestedYear <= currentYear + 1) {
+        month = rawMonth;
+      }
+    }
 
     // Trigger background Pointercrate Time Machine scan if not cached yet
     const pcData = await ensurePointercrateMonth(month);
@@ -1638,6 +1739,14 @@ async function startServer(): Promise<void> {
   });
 
   app.get('/api/events/stream', (req, res) => {
+    const ip = req.ip || req.socket.remoteAddress || 'unknown';
+    const currentForIp = sseConnectionsByIp.get(ip) ?? 0;
+    if (currentForIp >= 5 || sseClients.size >= 250) {
+      res.status(429).json({ error: 'Too many active live stream connections' });
+      return;
+    }
+
+    sseConnectionsByIp.set(ip, currentForIp + 1);
     res.writeHead(200, {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache, no-transform',
@@ -1657,10 +1766,27 @@ async function startServer(): Promise<void> {
     req.on('close', () => {
       clearInterval(keepAlive);
       sseClients.delete(res);
+      const count = sseConnectionsByIp.get(ip) ?? 1;
+      if (count <= 1) {
+        sseConnectionsByIp.delete(ip);
+      } else {
+        sseConnectionsByIp.set(ip, count - 1);
+      }
     });
   });
 
-  app.post('/api/sync', async (_req, res) => {
+  app.post('/api/sync', syncLimiter, async (_req, res) => {
+    const now = Date.now();
+    if (now - lastManualSyncAt < 15_000 && cache.status.lastSyncedAt) {
+      res.json({
+        ok: true,
+        newEvents: [],
+        status: cache.status,
+        throttled: true,
+      });
+      return;
+    }
+    lastManualSyncAt = now;
     const result = await syncAllSources(true);
     res.json({
       ok: true,
@@ -1669,8 +1795,10 @@ async function startServer(): Promise<void> {
     });
   });
 
-  app.post('/api/notifications/test', (req, res) => {
-    const kind = String(req.body?.kind ?? 'top10_victor');
+  // Test notification returns directly to caller without broadcasting to other public visitors
+  app.post('/api/notifications/test', testNotifLimiter, (req, res) => {
+    const rawKind = String(req.body?.kind ?? 'top10_victor');
+    const kind = VALID_TEST_KINDS.has(rawKind) ? rawKind : 'top10_victor';
     const top1 = cache.top10[0];
     const levelName = top1?.name ?? 'GRIEF';
     const levelId = top1?.levelId ?? 149992717;
@@ -1726,7 +1854,6 @@ async function startServer(): Promise<void> {
       };
     }
 
-    pushEvent(ev, true);
     res.json({ ok: true, event: ev });
   });
 
