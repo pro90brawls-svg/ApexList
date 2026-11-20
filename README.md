@@ -16,3 +16,9 @@
 - **Frontend**: React, TypeScript, Tailwind CSS, Motion, Lucide Icons
 - **Backend**: Node.js, Express, Server-Sent Events (SSE)
 - **Data Sources**: Pointercrate API / Time Machine & AREDL v2 API
+
+## Getting Started
+
+```bash
+npm install
+npm run dev
